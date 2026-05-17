@@ -1,0 +1,645 @@
+/* ============================================================
+   FORM SECTION — Full redesign
+   Palette: deep navy #1a3c5e | electric blue #2563eb
+   Fonts: Playfair Display (headings) · DM Sans (body)
+   ============================================================ */
+
+/* --- Section wrapper ---------------------------------------- */
+.form-section {
+  position: relative;
+  padding: 100px 24px 120px;
+  overflow: hidden;
+  background: #f0f5ff;
+}
+
+/* Decorative background blobs */
+.form-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.form-blob--1 {
+  width: 480px;
+  height: 480px;
+  top: -120px;
+  left: -120px;
+  background: radial-gradient(circle, rgba(37, 99, 235, 0.12) 0%, transparent 70%);
+}
+
+.form-blob--2 {
+  width: 400px;
+  height: 400px;
+  bottom: -80px;
+  right: -80px;
+  background: radial-gradient(circle, rgba(26, 60, 94, 0.1) 0%, transparent 70%);
+}
+
+/* --- Card ---------------------------------------------------- */
+.form-card {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  max-width: 960px;
+  margin: 0 auto;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow:
+    0 4px 6px rgba(26, 60, 94, 0.04),
+    0 20px 60px rgba(26, 60, 94, 0.14),
+    0 0 0 1px rgba(26, 60, 94, 0.06);
+}
+
+/* --- Panels -------------------------------------------------- */
+.form-panel {
+  padding: 56px 48px;
+}
+
+/* Left — brand/info panel */
+.form-panel--left {
+  background: linear-gradient(150deg, #1a3c5e 0%, #0f2540 60%, #1a3c5e 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle grid texture on left panel */
+.form-panel--left::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 32px 32px;
+  pointer-events: none;
+}
+
+/* Glowing orb on left panel */
+.form-panel--left::after {
+  content: '';
+  position: absolute;
+  top: -60px;
+  right: -60px;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(37, 99, 235, 0.35) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* Right — white form panel */
+.form-panel--right {
+  background: #ffffff;
+}
+
+/* --- Left panel content ------------------------------------- */
+.form-panel-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: rgba(37, 99, 235, 0.25);
+  border: 1px solid rgba(37, 99, 235, 0.4);
+  border-radius: 100px;
+  color: #93c5fd;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  width: fit-content;
+  position: relative;
+  z-index: 1;
+}
+
+.form-panel-heading {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 38px;
+  font-weight: 700;
+  line-height: 1.15;
+  color: #ffffff;
+  letter-spacing: -0.5px;
+  position: relative;
+  z-index: 1;
+}
+
+.form-panel-heading--accent {
+  color: #60a5fa;
+  display: block;
+}
+
+.form-panel-sub {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.65);
+  line-height: 1.7;
+  position: relative;
+  z-index: 1;
+}
+
+/* Feature list */
+.form-features {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  position: relative;
+  z-index: 1;
+}
+
+.form-feature-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.form-feature-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  flex-shrink: 0;
+}
+
+/* Trust row */
+.form-trust {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: auto;
+  padding-top: 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+  z-index: 1;
+}
+
+.form-trust-avatars {
+  display: flex;
+}
+
+.form-trust-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  border: 2px solid #1a3c5e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  margin-left: -8px;
+}
+
+.form-trust-avatar:first-child {
+  margin-left: 0;
+}
+
+.form-trust-label {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12.5px;
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 1.4;
+}
+
+.form-trust-label strong {
+  color: #fff;
+  font-weight: 700;
+}
+
+/* --- Right panel — form ------------------------------------- */
+.form-right-heading {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: #1a3c5e;
+  margin-bottom: 28px;
+  letter-spacing: -0.3px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Field wrapper */
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Floating-ish label */
+.form-label {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: #64748b;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  transition: color 0.2s ease;
+}
+
+.form-field--active .form-label {
+  color: #2563eb;
+}
+
+.form-label-optional {
+  font-weight: 400;
+  text-transform: none;
+  color: #94a3b8;
+  letter-spacing: 0;
+  font-size: 11px;
+}
+
+/* Input wrapper (icon + input) */
+.form-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.form-input-wrap--textarea {
+  align-items: flex-start;
+}
+
+/* Icon inside input */
+.form-input-icon {
+  position: absolute;
+  left: 14px;
+  width: 16px;
+  height: 16px;
+  color: #94a3b8;
+  pointer-events: none;
+  flex-shrink: 0;
+  transition: color 0.2s ease;
+  z-index: 1;
+}
+
+.form-input-icon--top {
+  top: 12px;
+}
+
+.form-field--active .form-input-icon {
+  color: #2563eb;
+}
+
+/* Select chevron */
+.form-select-arrow {
+  position: absolute;
+  right: 14px;
+  width: 12px;
+  height: 8px;
+  color: #94a3b8;
+  pointer-events: none;
+  transition: color 0.2s ease;
+}
+
+.form-field--active .form-select-arrow {
+  color: #2563eb;
+}
+
+/* All inputs / select / textarea */
+.form-input-wrap input,
+.form-input-wrap select,
+.form-input-wrap textarea {
+  width: 100%;
+  padding: 12px 16px 12px 42px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 12px;
+  background: #f8fafc;
+  color: #1a3c5e;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  transition:
+    border-color 0.25s ease,
+    background 0.25s ease,
+    box-shadow 0.25s ease;
+  outline: none;
+  appearance: none;
+}
+
+.form-input-wrap select {
+  padding-right: 38px;
+  cursor: pointer;
+}
+
+.form-input-wrap textarea {
+  resize: vertical;
+  min-height: 88px;
+  line-height: 1.6;
+}
+
+.form-input-wrap input::placeholder,
+.form-input-wrap textarea::placeholder {
+  color: #c0cad6;
+  font-weight: 400;
+}
+
+/* Focus states */
+.form-input-wrap input:focus,
+.form-input-wrap select:focus,
+.form-input-wrap textarea:focus {
+  border-color: #2563eb;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* Hover state */
+.form-input-wrap input:hover,
+.form-input-wrap select:hover,
+.form-input-wrap textarea:hover {
+  border-color: #94a3b8;
+  background: #fff;
+}
+
+/* Select option styling */
+.form-input-wrap select option {
+  color: #1a3c5e;
+  background: #fff;
+  font-family: 'DM Sans', sans-serif;
+}
+
+/* --- Submit button ------------------------------------------ */
+.form-submit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 15px 28px;
+  margin-top: 4px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #2563eb 0%, #1a3c5e 100%);
+  color: #fff;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  box-shadow:
+    0 4px 14px rgba(37, 99, 235, 0.35),
+    0 1px 3px rgba(37, 99, 235, 0.2);
+}
+
+.form-submit::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.form-submit:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 8px 24px rgba(37, 99, 235, 0.4),
+    0 2px 6px rgba(37, 99, 235, 0.3);
+}
+
+.form-submit:hover::before {
+  opacity: 1;
+}
+
+.form-submit:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+}
+
+.form-submit svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  transition: transform 0.3s ease;
+}
+
+.form-submit:hover svg {
+  transform: translateX(3px);
+}
+
+.form-submit:disabled {
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
+.form-submit:disabled:hover {
+  transform: translateY(0);
+  box-shadow:
+    0 4px 14px rgba(37, 99, 235, 0.35),
+    0 1px 3px rgba(37, 99, 235, 0.2);
+}
+
+.form-submit-spinner {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  animation: form-spinner-rotate 1s linear infinite;
+  stroke: #ffffff;
+}
+
+@keyframes form-spinner-rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Disclaimer */
+.form-disclaimer {
+  text-align: center;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11.5px;
+  color: #94a3b8;
+  line-height: 1.5;
+  margin-top: -4px;
+}
+
+/* --- Success state ------------------------------------------ */
+.form-success {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  height: 100%;
+  min-height: 320px;
+  gap: 16px;
+  animation: formSuccessFadeIn 0.5s ease forwards;
+}
+
+@keyframes formSuccessFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.form-success-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2563eb, #1a3c5e);
+  color: #fff;
+  font-size: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.35);
+  animation: successPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s both;
+}
+
+@keyframes successPop {
+  from { transform: scale(0); }
+  to   { transform: scale(1); }
+}
+
+.form-success h3 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: #1a3c5e;
+  margin: 0;
+}
+
+.form-success p {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  color: #64748b;
+  line-height: 1.6;
+  max-width: 220px;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+/* Tablet — stack panels vertically */
+@media (max-width: 860px) {
+  .form-card {
+    grid-template-columns: 1fr;
+  }
+
+  .form-panel--left {
+    padding: 40px 36px 36px;
+  }
+
+  .form-panel-heading {
+    font-size: 32px;
+  }
+
+  .form-panel--left::after {
+    width: 150px;
+    height: 150px;
+  }
+
+  .form-panel--right {
+    padding: 36px 36px 44px;
+  }
+
+  .form-trust {
+    margin-top: 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .form-section {
+    padding: 72px 16px 80px;
+  }
+
+  .form-panel--left,
+  .form-panel--right {
+    padding: 32px 24px;
+  }
+
+  .form-panel-heading {
+    font-size: 28px;
+  }
+
+  .form-right-heading {
+    font-size: 20px;
+    margin-bottom: 20px;
+  }
+
+  .form {
+    gap: 16px;
+  }
+
+  .form-input-wrap input,
+  .form-input-wrap select,
+  .form-input-wrap textarea {
+    font-size: 13px;
+    padding: 11px 14px 11px 40px;
+  }
+
+  .form-submit {
+    padding: 13px 22px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .form-panel--left,
+  .form-panel--right {
+    padding: 28px 20px;
+  }
+
+  .form-panel-heading {
+    font-size: 24px;
+  }
+
+  .form-features {
+    gap: 10px;
+  }
+
+  .form-feature-item {
+    font-size: 12.5px;
+  }
+
+  .form-submit svg {
+    display: none;
+  }
+}
+
+@media (max-width: 360px) {
+  .form-panel--left,
+  .form-panel--right {
+    padding: 24px 16px;
+  }
+
+  .form-panel-heading {
+    font-size: 22px;
+  }
+
+  .form-label {
+    font-size: 11px;
+  }
+}
