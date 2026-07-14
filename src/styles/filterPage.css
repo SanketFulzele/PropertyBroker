@@ -1,0 +1,338 @@
+/* ============================================================
+   FILTER PAGE
+   Palette: deep navy #1a3c5e | electric blue #2563eb
+   Fonts: Playfair Display (headings) · DM Sans (body)
+   ============================================================ */
+
+/* --- Page wrapper ------------------------------------------- */
+.filter-page {
+  min-height: 100vh;
+  background: #f8fafc;
+  padding-top: 80px;
+}
+
+/* --- Header ------------------------------------------------- */
+.filter-header {
+  padding: 40px 40px 0;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.filter-header-badge {
+  display: inline-block;
+  background: #eff6ff;
+  color: #2563eb;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  padding: 6px 14px;
+  border-radius: 100;
+  margin-bottom: 14px;
+  font-family: 'DM Sans', sans-serif;
+  text-transform: uppercase;
+}
+
+.filter-header-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(30px, 4vw, 48px);
+  font-weight: 800;
+  color: #1a3c5e;
+  line-height: 1.2;
+  margin: 0 0 8px;
+}
+
+.filter-header-sub {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 16px;
+  color: #64748b;
+  margin: 0;
+}
+
+/* --- Layout ------------------------------------------------- */
+.filter-layout {
+  display: flex;
+  gap: 32px;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 32px 40px 80px;
+}
+
+/* --- Sidebar ------------------------------------------------ */
+.filter-sidebar {
+  width: 300px;
+  flex-shrink: 0;
+  background: #fff;
+  border-radius: 20px;
+  border: 1px solid #f1f5f9;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+  padding: 28px;
+  align-self: flex-start;
+  position: sticky;
+  top: 100px;
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
+}
+
+.filter-sidebar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.filter-sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.filter-sidebar::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 2px;
+}
+
+/* --- Main content ------------------------------------------- */
+.filter-main {
+  flex: 1;
+  min-width: 0;
+}
+
+/* --- Result bar --------------------------------------------- */
+.filter-result-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.filter-result-count {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.filter-result-count strong {
+  color: #1a3c5e;
+  font-weight: 700;
+}
+
+/* --- Property grid ------------------------------------------ */
+.filter-property-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 24px;
+}
+
+/* --- Empty state -------------------------------------------- */
+.filter-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 80px 24px;
+  min-height: 400px;
+}
+
+.filter-empty-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  margin-bottom: 24px;
+}
+
+.filter-empty-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: #1a3c5e;
+  margin: 0 0 8px;
+}
+
+.filter-empty-text {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  color: #64748b;
+  margin: 0 0 28px;
+  max-width: 360px;
+}
+
+.filter-empty-btn {
+  padding: 12px 28px;
+  border-radius: 12px;
+  border: none;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: #fff;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
+  transition: all 0.25s;
+}
+
+.filter-empty-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.4);
+}
+
+/* --- Mobile filter toggle ----------------------------------- */
+.filter-toggle-btn {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 12px;
+  border: 1.5px solid #e2e8f0;
+  background: #fff;
+  color: #1a3c5e;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  transition: all 0.2s;
+}
+
+.filter-toggle-btn:hover {
+  border-color: #2563eb;
+  color: #2563eb;
+}
+
+/* --- Mobile drawer overlay ---------------------------------- */
+.filter-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.5);
+  z-index: 1100;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.filter-overlay.active {
+  opacity: 1;
+}
+
+.filter-drawer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 320px;
+  max-width: 85vw;
+  height: 100vh;
+  background: #fff;
+  z-index: 1101;
+  transform: translateX(-100%);
+  transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  overflow-y: auto;
+  padding: 24px;
+}
+
+.filter-drawer.active {
+  transform: translateX(0);
+}
+
+.filter-drawer-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  border: 1.5px solid #e2e8f0;
+  background: #fff;
+  cursor: pointer;
+  margin-bottom: 16px;
+  transition: all 0.2s;
+  color: #1a3c5e;
+}
+
+.filter-drawer-close:hover {
+  background: #f1f5f9;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+@media (max-width: 1024px) {
+  .filter-header {
+    padding: 32px 24px 0;
+  }
+
+  .filter-layout {
+    padding: 24px 24px 60px;
+    gap: 24px;
+  }
+
+  .filter-sidebar {
+    width: 260px;
+    padding: 24px;
+  }
+
+  .filter-property-grid {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .filter-toggle-btn {
+    display: inline-flex;
+  }
+
+  .filter-layout {
+    flex-direction: column;
+    padding: 20px 16px 60px;
+  }
+
+  .filter-sidebar {
+    display: none;
+  }
+
+  .filter-header {
+    padding: 24px 16px 0;
+  }
+
+  .filter-header-title {
+    font-size: clamp(26px, 6vw, 36px);
+  }
+
+  .filter-property-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .filter-overlay {
+    display: block;
+    pointer-events: none;
+  }
+
+  .filter-overlay.active {
+    pointer-events: all;
+  }
+}
+
+@media (max-width: 480px) {
+  .filter-header {
+    padding: 20px 12px 0;
+  }
+
+  .filter-layout {
+    padding: 16px 12px 48px;
+  }
+
+  .filter-result-bar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .filter-drawer {
+    width: 290px;
+    padding: 20px;
+  }
+}

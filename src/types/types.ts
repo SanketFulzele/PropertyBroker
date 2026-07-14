@@ -13,6 +13,11 @@ export interface Property {
   image: string;
   amenities: string[];
   builder: string;
+  furnished: string;
+  availability: string;
+  possession: string;
+  parking: string;
+  description: string;
 }
 
 export interface Stat {
