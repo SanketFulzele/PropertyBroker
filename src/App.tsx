@@ -7,10 +7,12 @@ import ScrollToTop from "./components/ScrollToTop";
 import Home from "./pages/Home";
 import Privacy from "./pages/Privacy";
 import FilterPage from "./pages/FilterPage";
+import MetaPixel from "./components/MetaPixel";
 
 export default function App() {
   return (
     <Router>
+      <MetaPixel />
       <ScrollToTop />
       <Navbar />
       <Routes>
