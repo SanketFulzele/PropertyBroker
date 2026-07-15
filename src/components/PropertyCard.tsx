@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { Property } from "../types/types";
+import { Badge, Button } from "../baseComponents";
 
 export default function PropertyCard({
   prop,
@@ -53,23 +54,19 @@ export default function PropertyCard({
               "linear-gradient(to top, rgba(15,23,42,0.7) 0%, transparent 50%)",
           }}
         />
-        <div
+        <Badge
+          text={prop.badge}
+          background={prop.badgeColor}
+          color="#fff"
+          size={11}
+          padding="4px 12px"
           style={{
             position: "absolute",
             top: 14,
             left: 14,
-            background: prop.badgeColor,
-            color: "#fff",
-            padding: "4px 12px",
-            borderRadius: 100,
-            fontSize: 11,
-            fontWeight: 700,
-            fontFamily: "'DM Sans', sans-serif",
             letterSpacing: 0.5,
           }}
-        >
-          {prop.badge}
-        </div>
+        />
         <div
           style={{
             position: "absolute",
@@ -181,80 +178,45 @@ export default function PropertyCard({
           style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 18 }}
         >
           {prop.amenities.slice(0, 3).map((a) => (
-            <span
+            <Badge
               key={a}
-              style={{
-                padding: "4px 10px",
-                borderRadius: 100,
-                background: "#eff6ff",
-                color: "#3b82f6",
-                fontSize: 11,
-                fontWeight: 600,
-                fontFamily: "'DM Sans', sans-serif",
-              }}
-            >
-              ✓ {a}
-            </span>
+              text={`✓ ${a}`}
+              background="#eff6ff"
+              color="#3b82f6"
+              size={11}
+              padding="4px 10px"
+              borderRadius={100}
+              style={{ fontWeight: 600 }}
+            />
           ))}
           {prop.amenities.length > 3 && (
-            <span
-              style={{
-                padding: "4px 10px",
-                borderRadius: 100,
-                background: "#f8fafc",
-                color: "#94a3b8",
-                fontSize: 11,
-                fontWeight: 600,
-                fontFamily: "'DM Sans', sans-serif",
-              }}
-            >
-              +{prop.amenities.length - 3} more
-            </span>
+            <Badge
+              text={`+${prop.amenities.length - 3} more`}
+              background="#f8fafc"
+              color="#94a3b8"
+              size={11}
+              padding="4px 10px"
+              borderRadius={100}
+              style={{ fontWeight: 600 }}
+            />
           )}
         </div>
 
         <div style={{ display: "flex", gap: 10 }}>
-          <button
-            style={{
-              flex: 1,
-              padding: "11px 0",
-              borderRadius: 10,
-              border: "1.5px solid #2563eb",
-              background: "transparent",
-              color: "#2563eb",
-              fontWeight: 700,
-              fontSize: 13,
-              cursor: "pointer",
-              fontFamily: "'DM Sans', sans-serif",
-              transition: "all 0.25s",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = "#eff6ff";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = "transparent";
-            }}
+          <Button
+            variant="outline"
+            size="sm"
+            style={{ flex: 1, padding: "11px 0", borderRadius: 10, fontSize: 13 }}
           >
             Contact Builder
-          </button>
-          <button
-            style={{
-              flex: 1,
-              padding: "11px 0",
-              borderRadius: 10,
-              border: "none",
-              background:
-                "linear-gradient(135deg, #2563eb, #1d4ed8)",
-              color: "#fff",
-              fontWeight: 700,
-              fontSize: 13,
-              cursor: "pointer",
-              fontFamily: "'DM Sans', sans-serif",
-              boxShadow: "0 4px 14px rgba(37,99,235,0.3)",
-            }}
+          </Button>
+          <Button
+            variant="primary"
+            size="sm"
+            style={{ flex: 1, padding: "11px 0", borderRadius: 10, fontSize: 13 }}
           >
             View Details
-          </button>
+          </Button>
         </div>
       </div>
     </div>

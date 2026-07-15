@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Phone, Menu, X } from "lucide-react";
 import "../styles/navbar.css";
+import { Logo } from "../baseComponents";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -13,7 +14,7 @@ export default function Navbar() {
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
     const onResize = () => {
-      setMobileMenuOpen(false); // Close mobile menu on resize
+      setMobileMenuOpen(false);
     };
 
     window.addEventListener("scroll", onScroll);
@@ -33,19 +34,16 @@ export default function Navbar() {
     <nav
       className={`navbar ${scrolled ? "scrolled" : ""} ${isHome ? "home" : ""}`}
       style={{
-        background: isHome 
+        background: isHome
           ? (scrolled ? "rgba(255,255,255,0.95)" : "transparent")
           : "rgba(255,255,255,0.98)",
       }}
     >
       <div className="navbar-content">
-        {/* Logo */}
         <div className="navbar-logo" onClick={() => navigate("/")}>
-          <div className="navbar-logo-icon">N</div>
-          <span className="navbar-logo-text">PropertyBroker</span>
+          <Logo size="md" />
         </div>
 
-        {/* Desktop Menu */}
         <div className="navbar-menu">
           {["Buy", "Rent", "Projects", "Developers"].map((item) => (
             <button
@@ -58,15 +56,12 @@ export default function Navbar() {
           ))}
         </div>
 
-        {/* Right Section */}
         <div className="navbar-right">
-          {/* Phone */}
           <a href="tel:9921215145" className="navbar-phone">
             <Phone size={18} />
             <span>99-2121-5145</span>
           </a>
 
-          {/* Mobile Menu Toggle */}
           <button
             className="navbar-menu-toggle"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -77,7 +72,6 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Dropdown Menu */}
       <div className={`navbar-mobile-menu ${mobileMenuOpen ? "active" : ""}`}>
         {["Buy", "Rent", "Projects", "Developers"].map((item) => (
           <button

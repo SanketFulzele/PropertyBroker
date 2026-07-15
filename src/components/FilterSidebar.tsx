@@ -1,3 +1,5 @@
+import { CheckboxGroup } from "../baseComponents";
+
 interface FilterSidebarProps {
   selectedTypes: string[];
   selectedBhk: string[];
@@ -27,82 +29,6 @@ const AVAILABILITY_OPTIONS = ["Ready to Move", "Under Construction"];
 const PARKING_OPTIONS = ["Covered", "Open", "None"];
 const AMENITY_OPTIONS = ["Gym", "Lift", "Garden", "Swimming Pool", "Club House", "Security"];
 const CITY_OPTIONS = ["Mumbai", "Bengaluru", "Delhi", "Pune"];
-
-function CheckboxGroup({
-  options,
-  selected,
-  onChange,
-}: {
-  options: string[];
-  selected: string[];
-  onChange: (val: string[]) => void;
-}) {
-  const toggle = (item: string) => {
-    if (selected.includes(item)) {
-      onChange(selected.filter((s) => s !== item));
-    } else {
-      onChange([...selected, item]);
-    }
-  };
-
-  return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-      {options.map((item) => (
-        <label
-          key={item}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 10,
-            cursor: "pointer",
-            fontFamily: "'DM Sans', sans-serif",
-            fontSize: 14,
-            color: "#374151",
-            fontWeight: 500,
-          }}
-        >
-          <span
-            onClick={() => toggle(item)}
-            style={{
-              width: 18,
-              height: 18,
-              borderRadius: 5,
-              border: selected.includes(item)
-                ? "2px solid #2563eb"
-                : "1.5px solid #d1d5db",
-              background: selected.includes(item) ? "#2563eb" : "#fff",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              cursor: "pointer",
-              transition: "all 0.2s",
-              flexShrink: 0,
-            }}
-          >
-            {selected.includes(item) && (
-              <svg
-                width="10"
-                height="8"
-                viewBox="0 0 10 8"
-                fill="none"
-                style={{ display: "block" }}
-              >
-                <path
-                  d="M1 4L3.5 6.5L9 1"
-                  stroke="#fff"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            )}
-          </span>
-          <span onClick={() => toggle(item)}>{item}</span>
-        </label>
-      ))}
-    </div>
-  );
-}
 
 export default function FilterSidebar({
   selectedTypes,
@@ -198,9 +124,11 @@ export default function FilterSidebar({
       <div>
         <div style={sectionLabelStyle}>Property Type</div>
         <CheckboxGroup
+          label=""
           options={PROPERTY_TYPES}
           selected={selectedTypes}
           onChange={onTypeChange}
+          maxVisible={10}
         />
       </div>
 
@@ -243,9 +171,11 @@ export default function FilterSidebar({
       <div>
         <div style={sectionLabelStyle}>BHK</div>
         <CheckboxGroup
+          label=""
           options={BHK_OPTIONS}
           selected={selectedBhk}
           onChange={onBhkChange}
+          maxVisible={10}
         />
       </div>
 
@@ -277,18 +207,22 @@ export default function FilterSidebar({
       <div>
         <div style={sectionLabelStyle}>Furnishing</div>
         <CheckboxGroup
+          label=""
           options={FURNISHING_OPTIONS}
           selected={selectedFurnishing}
           onChange={onFurnishingChange}
+          maxVisible={10}
         />
       </div>
 
       <div>
         <div style={sectionLabelStyle}>Availability</div>
         <CheckboxGroup
+          label=""
           options={AVAILABILITY_OPTIONS}
           selected={selectedAvailability}
           onChange={onAvailabilityChange}
+          maxVisible={10}
         />
       </div>
 
@@ -317,18 +251,22 @@ export default function FilterSidebar({
       <div>
         <div style={sectionLabelStyle}>Parking</div>
         <CheckboxGroup
+          label=""
           options={PARKING_OPTIONS}
           selected={selectedParking}
           onChange={onParkingChange}
+          maxVisible={10}
         />
       </div>
 
       <div>
         <div style={sectionLabelStyle}>Amenities</div>
         <CheckboxGroup
+          label=""
           options={AMENITY_OPTIONS}
           selected={selectedAmenities}
           onChange={onAmenitiesChange}
+          maxVisible={10}
         />
       </div>
     </div>

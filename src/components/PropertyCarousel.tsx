@@ -1,16 +1,14 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useState } from "react";
 import type { MouseEvent } from "react";
-import { useIntersectionObserver } from "../hooks/hooks";
 import { PROPERTIES } from "../data/data";
 import PropertyCard from "./PropertyCard";
+import { SectionHeader } from "../baseComponents";
 
 export default function PropertyCarousel() {
   const [activeIdx, setActiveIdx] = useState(0);
   const [dragging, setDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [translateX, setTranslateX] = useState(0);
-  const { ref, visible } = useIntersectionObserver(0.1);
-  const trackRef = useRef<HTMLDivElement>(null);
   const CARD_W = 380;
   const GAP = 24;
 
@@ -47,7 +45,6 @@ export default function PropertyCarousel() {
   return (
     <section
       id="buy"
-      ref={ref}
       style={{ padding: "100px 0", background: "#f8fafc", overflow: "hidden" }}
     >
       <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 40px" }}>
@@ -57,44 +54,18 @@ export default function PropertyCarousel() {
             justifyContent: "space-between",
             alignItems: "flex-end",
             marginBottom: 48,
-            opacity: visible ? 1 : 0,
-            transform: visible ? "none" : "translateY(30px)",
-            transition: "all 0.7s ease",
           }}
         >
-          <div>
-            <div
-              style={{
-                display: "inline-block",
-                background: "#eff6ff",
-                color: "#2563eb",
-                fontSize: 12,
-                fontWeight: 700,
-                letterSpacing: 2,
-                padding: "6px 14px",
-                borderRadius: 100,
-                marginBottom: 14,
-                fontFamily: "'DM Sans', sans-serif",
-                textTransform: "uppercase",
-              }}
-            >
-              Featured Properties
-            </div>
-            <h2
-              style={{
-                fontFamily: "'Playfair Display', Georgia, serif",
-                fontSize: "clamp(30px, 4vw, 48px)",
-                fontWeight: 800,
-                color: "#1a3c5e",
-                lineHeight: 1.2,
-                margin: 0,
-              }}
-            >
-              Handpicked Homes
-              <br />
-              <span style={{ color: "#2563eb" }}>Just for You</span>
-            </h2>
-          </div>
+          <SectionHeader
+            badge="Featured Properties"
+            heading="Handpicked Homes"
+            accentText="Just for You"
+            headingSize="clamp(30px, 4vw, 48px)"
+            align="left"
+            subtitle=""
+            headingStyle={{ margin: 0, lineHeight: 1.2 }}
+            badgeStyle={{ marginBottom: 14 }}
+          />
           <div style={{ display: "flex", gap: 12, paddingBottom: 4 }}>
             {[prev, next].map((fn, i) => (
               <button
@@ -149,7 +120,6 @@ export default function PropertyCarousel() {
           onMouseLeave={handleMouseUp}
         >
           <div
-            ref={trackRef}
             style={{
               display: "flex",
               gap: GAP,
@@ -165,7 +135,7 @@ export default function PropertyCarousel() {
                 key={prop.id}
                 prop={prop}
                 delay={i * 0.05}
-                visible={visible}
+                visible={true}
                 width={CARD_W}
               />
             ))}

@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { Logo } from "../baseComponents";
 import "../styles/footer.css";
 
 export default function Footer() {
@@ -38,11 +39,9 @@ export default function Footer() {
     <footer className="footer">
       <div className="footer-container">
         <div className="footer-grid">
-          {/* Logo Section */}
           <div className="footer-logo-section">
             <div className="footer-logo">
-              <div className="footer-logo-icon">N</div>
-              <span className="footer-logo-text">PropertyBroker</span>
+              <Logo size="md" />
             </div>
 
             <p className="footer-description">
@@ -50,7 +49,6 @@ export default function Footer() {
             </p>
           </div>
 
-          {/* Dynamic Links */}
           {footerData.map((col) => (
             <div key={col.title} className="footer-column">
               <h4 className="footer-column-title">{col.title}</h4>
@@ -66,7 +64,6 @@ export default function Footer() {
           ))}
         </div>
 
-        {/* Bottom */}
         <div className="footer-bottom">
           <p className="footer-copyright">
             © {year} PropertyBroker. All rights reserved.

@@ -1,121 +1,23 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { FILTER_PROPERTIES } from "../data/filterProperties";
-import type { Property } from "../types/types";
 import PropertyCard from "../components/PropertyCard";
 import FilterSidebar from "../components/FilterSidebar";
+import { EmptyState } from "../baseComponents";
+import { usePropertyFilters } from "../utils/usePropertyFilters";
 import "../styles/filterPage.css";
 
-function parsePrice(price: string): number {
-  const cleaned = price.replace(/[₹,\s]/g, "");
-  if (cleaned.includes("Cr")) {
-    return parseFloat(cleaned.replace("Cr", "")) * 10000000;
-  }
-  if (cleaned.includes("L")) {
-    return parseFloat(cleaned.replace("L", "")) * 100000;
-  }
-  return parseFloat(cleaned) || 0;
-}
-
 export default function FilterPage() {
-  const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
-  const [selectedBhk, setSelectedBhk] = useState<string[]>([]);
-  const [selectedFurnishing, setSelectedFurnishing] = useState<string[]>([]);
-  const [selectedAvailability, setSelectedAvailability] = useState<string[]>([]);
-  const [selectedParking, setSelectedParking] = useState<string[]>([]);
-  const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
-  const [selectedCity, setSelectedCity] = useState("");
-  const [priceMin, setPriceMin] = useState("");
-  const [priceMax, setPriceMax] = useState("");
+  const { filters, setFilter, clearAll, filtered, total, shown } = usePropertyFilters(FILTER_PROPERTIES);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
-  const clearAll = () => {
-    setSelectedTypes([]);
-    setSelectedBhk([]);
-    setSelectedFurnishing([]);
-    setSelectedAvailability([]);
-    setSelectedParking([]);
-    setSelectedAmenities([]);
-    setSelectedCity("");
-    setPriceMin("");
-    setPriceMax("");
-  };
-
   const hasActiveFilters =
-    selectedTypes.length > 0 ||
-    selectedBhk.length > 0 ||
-    selectedFurnishing.length > 0 ||
-    selectedAvailability.length > 0 ||
-    selectedParking.length > 0 ||
-    selectedAmenities.length > 0 ||
-    selectedCity !== "" ||
-    priceMin !== "" ||
-    priceMax !== "";
-
-  const filtered = useMemo(() => {
-    return FILTER_PROPERTIES.filter((prop: Property) => {
-      if (selectedTypes.length > 0 && !selectedTypes.includes(prop.type)) {
-        return false;
-      }
-
-      if (selectedBhk.length > 0) {
-        const match = selectedBhk.some((b) => {
-          if (b === "4+ BHK") {
-            const num = parseInt(prop.bhk);
-            return !isNaN(num) && num >= 4;
-          }
-          return prop.bhk === b;
-        });
-        if (!match) return false;
-      }
-
-      if (selectedFurnishing.length > 0 && !selectedFurnishing.includes(prop.furnished)) {
-        return false;
-      }
-
-      if (selectedAvailability.length > 0 && !selectedAvailability.includes(prop.availability)) {
-        return false;
-      }
-
-      if (selectedParking.length > 0 && !selectedParking.includes(prop.parking)) {
-        return false;
-      }
-
-      if (selectedAmenities.length > 0) {
-        const hasAll = selectedAmenities.every((a) =>
-          prop.amenities.some(
-            (pa) => pa.toLowerCase() === a.toLowerCase()
-          )
-        );
-        if (!hasAll) return false;
-      }
-
-      if (selectedCity && prop.city !== selectedCity) {
-        return false;
-      }
-
-      if (priceMin !== "") {
-        const minVal = parsePrice(priceMin);
-        if (parsePrice(prop.price) < minVal) return false;
-      }
-
-      if (priceMax !== "") {
-        const maxVal = parsePrice(priceMax);
-        if (parsePrice(prop.price) > maxVal) return false;
-      }
-
-      return true;
-    });
-  }, [
-    selectedTypes,
-    selectedBhk,
-    selectedFurnishing,
-    selectedAvailability,
-    selectedParking,
-    selectedAmenities,
-    selectedCity,
-    priceMin,
-    priceMax,
-  ]);
+    filters.propertyType.length > 0 ||
+    filters.bhk.length > 0 ||
+    filters.furnished.length > 0 ||
+    filters.availability.length > 0 ||
+    filters.city.length > 0 ||
+    filters.priceMin !== "" ||
+    filters.priceMax !== "";
 
   return (
     <div className="filter-page">
@@ -126,31 +28,31 @@ export default function FilterPage() {
           <span style={{ color: "#2563eb" }}>Property</span>
         </h1>
         <p className="filter-header-sub">
-          Use filters to narrow down from {FILTER_PROPERTIES.length}+ verified listings
+          Use filters to narrow down from {total}+ verified listings
         </p>
       </div>
 
       <div className="filter-layout">
         <aside className="filter-sidebar">
           <FilterSidebar
-            selectedTypes={selectedTypes}
-            selectedBhk={selectedBhk}
-            selectedFurnishing={selectedFurnishing}
-            selectedAvailability={selectedAvailability}
-            selectedParking={selectedParking}
-            selectedAmenities={selectedAmenities}
-            selectedCity={selectedCity}
-            priceMin={priceMin}
-            priceMax={priceMax}
-            onTypeChange={setSelectedTypes}
-            onBhkChange={setSelectedBhk}
-            onFurnishingChange={setSelectedFurnishing}
-            onAvailabilityChange={setSelectedAvailability}
-            onParkingChange={setSelectedParking}
-            onAmenitiesChange={setSelectedAmenities}
-            onCityChange={setSelectedCity}
-            onPriceMinChange={setPriceMin}
-            onPriceMaxChange={setPriceMax}
+            selectedTypes={filters.propertyType}
+            selectedBhk={filters.bhk}
+            selectedFurnishing={filters.furnished}
+            selectedAvailability={filters.availability}
+            selectedParking={filters.parking}
+            selectedAmenities={[]}
+            selectedCity={filters.city.length > 0 ? filters.city[0] : ""}
+            priceMin={filters.priceMin}
+            priceMax={filters.priceMax}
+            onTypeChange={(v) => setFilter("propertyType", v)}
+            onBhkChange={(v) => setFilter("bhk", v)}
+            onFurnishingChange={(v) => setFilter("furnished", v)}
+            onAvailabilityChange={(v) => setFilter("availability", v)}
+            onParkingChange={(v) => setFilter("parking", v)}
+            onAmenitiesChange={() => {}}
+            onCityChange={(v) => setFilter("city", v ? [v] : [])}
+            onPriceMinChange={(v) => setFilter("priceMin", v)}
+            onPriceMaxChange={(v) => setFilter("priceMax", v)}
             onClear={clearAll}
           />
         </aside>
@@ -184,24 +86,20 @@ export default function FilterPage() {
             <div className="filter-result-count">
               Showing{" "}
               <strong>
-                {filtered.length} of {FILTER_PROPERTIES.length}
+                {shown} of {total}
               </strong>{" "}
               properties
             </div>
           </div>
 
           {filtered.length === 0 ? (
-            <div className="filter-empty">
-              <div className="filter-empty-icon">🏠</div>
-              <h3 className="filter-empty-title">No properties found</h3>
-              <p className="filter-empty-text">
-                Try adjusting your filters or clear them to see all available
-                properties.
-              </p>
-              <button className="filter-empty-btn" onClick={clearAll}>
-                Clear All Filters
-              </button>
-            </div>
+            <EmptyState
+              icon="🏠"
+              title="No properties found"
+              description="Try adjusting your filters or clear them to see all available properties."
+              buttonText="Clear All Filters"
+              onButtonClick={clearAll}
+            />
           ) : (
             <div className="filter-property-grid">
               {filtered.map((prop, i) => (
@@ -233,24 +131,24 @@ export default function FilterPage() {
           </svg>
         </button>
         <FilterSidebar
-          selectedTypes={selectedTypes}
-          selectedBhk={selectedBhk}
-          selectedFurnishing={selectedFurnishing}
-          selectedAvailability={selectedAvailability}
-          selectedParking={selectedParking}
-          selectedAmenities={selectedAmenities}
-          selectedCity={selectedCity}
-          priceMin={priceMin}
-          priceMax={priceMax}
-          onTypeChange={setSelectedTypes}
-          onBhkChange={setSelectedBhk}
-          onFurnishingChange={setSelectedFurnishing}
-          onAvailabilityChange={setSelectedAvailability}
-          onParkingChange={setSelectedParking}
-          onAmenitiesChange={setSelectedAmenities}
-          onCityChange={setSelectedCity}
-          onPriceMinChange={setPriceMin}
-          onPriceMaxChange={setPriceMax}
+          selectedTypes={filters.propertyType}
+          selectedBhk={filters.bhk}
+          selectedFurnishing={filters.furnished}
+          selectedAvailability={filters.availability}
+          selectedParking={filters.parking}
+          selectedAmenities={[]}
+          selectedCity={filters.city.length > 0 ? filters.city[0] : ""}
+          priceMin={filters.priceMin}
+          priceMax={filters.priceMax}
+          onTypeChange={(v) => setFilter("propertyType", v)}
+          onBhkChange={(v) => setFilter("bhk", v)}
+          onFurnishingChange={(v) => setFilter("furnished", v)}
+          onAvailabilityChange={(v) => setFilter("availability", v)}
+          onParkingChange={(v) => setFilter("parking", v)}
+          onAmenitiesChange={() => {}}
+          onCityChange={(v) => setFilter("city", v ? [v] : [])}
+          onPriceMinChange={(v) => setFilter("priceMin", v)}
+          onPriceMaxChange={(v) => setFilter("priceMax", v)}
           onClear={() => {
             clearAll();
             setDrawerOpen(false);
