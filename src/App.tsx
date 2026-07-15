@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import WhatsAppFloat from "./components/WhatsAppFloat";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import ScrollToTop from "./components/ScrollToTop";
 import Home from "./pages/Home";
 import Privacy from "./pages/Privacy";
 import FilterPage from "./pages/FilterPage";
@@ -10,6 +11,7 @@ import FilterPage from "./pages/FilterPage";
 export default function App() {
   return (
     <Router>
+      <ScrollToTop />
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
