@@ -61,9 +61,9 @@ export default function Navbar() {
         {/* Right Section */}
         <div className="navbar-right">
           {/* Phone */}
-          <a href="tel:8381001406" className="navbar-phone">
+          <a href="tel:9921215145" className="navbar-phone">
             <Phone size={18} />
-            <span>8381-00-1406</span>
+            <span>99-2121-5145</span>
           </a>
 
           {/* Mobile Menu Toggle */}

@@ -3,7 +3,7 @@ import { useState } from "react";
 export default function WhatsAppFloat() {
   const [hovered, setHovered] = useState(false);
 
-  const phoneNumber = "918381001406";
+  const phoneNumber = "919921215145";
 
 const message = encodeURIComponent(
   "Hello, I am interested in exploring your property listings. Kindly share more details.\n\nRegards,\n\nhttps://property-broker-ngp.vercel.app/"
