@@ -1,5 +1,5 @@
 
-import type { Property, Stat, City } from "../types/types";
+import type { Property, Stat, City, Locality } from "../types/types";
 
 export const PROPERTIES: Property[] = [
   {
@@ -144,4 +144,71 @@ export const CITIES: City[] = [
   { name: "Hyderabad", properties: "28,700+", image: "https://images.unsplash.com/photo-1581417478175-a9ef18f210c2?w=400&q=80" },
   { name: "Pune", properties: "22,500+", image: "https://images.unsplash.com/photo-1599940824399-b87987ceb72a?w=400&q=80" },
   { name: "Chennai", properties: "19,800+", image: "https://images.unsplash.com/photo-1582510003544-4d00b7f74220?w=400&q=80" },
+];
+
+export const NAGPUR_LOCALITIES: Locality[] = [
+  {
+    id: 1,
+    name: "Manish Nagar",
+    description: "Premium residential hub near the airport with modern apartments and gated communities.",
+    propertyCount: "120+",
+    startingPrice: "₹42 L",
+    image: "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&q=80",
+  },
+  {
+    id: 2,
+    name: "Wardha Road",
+    description: "Fast-growing corridor with premium villas and excellent connectivity to the city center.",
+    propertyCount: "95+",
+    startingPrice: "₹55 L",
+    image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&q=80",
+  },
+  {
+    id: 3,
+    name: "MIHAN",
+    description: "Nagpur's IT and aerospace hub with world-class infrastructure and smart city amenities.",
+    propertyCount: "140+",
+    startingPrice: "₹38 L",
+    image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80",
+  },
+  {
+    id: 4,
+    name: "Beltarodi",
+    description: "Serene locality offering spacious plots and independent homes amidst green surroundings.",
+    propertyCount: "75+",
+    startingPrice: "₹35 L",
+    image: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&q=80",
+  },
+  {
+    id: 5,
+    name: "Dharampeth",
+    description: "Established upscale neighborhood with premium apartments and top-rated schools nearby.",
+    propertyCount: "85+",
+    startingPrice: "₹65 L",
+    image: "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=800&q=80",
+  },
+  {
+    id: 6,
+    name: "Pratap Nagar",
+    description: "Well-connected residential area with affordable luxury and proximity to metro stations.",
+    propertyCount: "110+",
+    startingPrice: "₹30 L",
+    image: "https://images.unsplash.com/photo-1600573472592-401b489a3cdc?w=800&q=80",
+  },
+  {
+    id: 7,
+    name: "Besa",
+    description: "Emerging residential destination with modern townships and excellent social infrastructure.",
+    propertyCount: "65+",
+    startingPrice: "₹28 L",
+    image: "https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=800&q=80",
+  },
+  {
+    id: 8,
+    name: "Civil Lines",
+    description: "Nagpur's heritage heart with premium properties and walking distance to major landmarks.",
+    propertyCount: "50+",
+    startingPrice: "₹80 L",
+    image: "https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=800&q=80",
+  },
 ];

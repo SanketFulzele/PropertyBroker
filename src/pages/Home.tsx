@@ -1,6 +1,6 @@
 import CTASection from '../components/CTASection'
 import WhyUsSection from '../components/WhyUsSection'
-import CitiesSection from '../components/CitiesSection'
+import AreaSection from '../components/AreaSection'
 import PropertyCarousel from '../components/PropertyCarousel'
 import StatsSection from '../components/StatsSection'
 import HeroSection from '../components/HeroSection'
@@ -14,7 +14,7 @@ const Home = () => {
       <PropertyCarousel />
       <WhyUsSection />
       <CTASection />
-      <CitiesSection />
+      <AreaSection />
       <FormComponent />
     </>
   )

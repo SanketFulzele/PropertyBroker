@@ -59,7 +59,7 @@ export default function PropertyCarousel() {
           <SectionHeader
             badge="Featured Properties"
             heading="Handpicked Homes"
-            accentText="Just for You"
+            accentText=" Just for You"
             headingSize="clamp(30px, 4vw, 48px)"
             align="left"
             subtitle=""

@@ -30,3 +30,12 @@ export interface City {
   properties: string;
   image: string;
 }
+
+export interface Locality {
+  id: number;
+  name: string;
+  description: string;
+  propertyCount: string;
+  startingPrice: string;
+  image: string;
+}
