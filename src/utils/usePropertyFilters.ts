@@ -8,7 +8,7 @@ export type FilterState = {
   furnished: string[];
   availability: string[];
   parking: string[];
-  city: string[];
+  locality: string[];
   priceMin: string;
   priceMax: string;
 };
@@ -19,13 +19,16 @@ export const INITIAL_FILTERS: FilterState = {
   furnished: [],
   availability: [],
   parking: [],
-  city: [],
+  locality: [],
   priceMin: "",
   priceMax: "",
 };
 
-export function usePropertyFilters(properties: Property[]) {
-  const [filters, setFilters] = useState<FilterState>(INITIAL_FILTERS);
+export function usePropertyFilters(properties: Property[], initialLocality: string = "") {
+  const [filters, setFilters] = useState<FilterState>(() => ({
+    ...INITIAL_FILTERS,
+    locality: initialLocality ? [initialLocality] : [],
+  }));
 
   const setFilter = <K extends keyof FilterState>(key: K, value: FilterState[K]) => {
     setFilters((prev) => ({ ...prev, [key]: value }));
@@ -53,7 +56,8 @@ export function usePropertyFilters(properties: Property[]) {
         return false;
       if (filters.parking.length > 0 && !filters.parking.includes(p.parking))
         return false;
-      if (filters.city.length > 0 && !filters.city.includes(p.city)) return false;
+      if (filters.locality.length > 0 && !filters.locality.includes(p.locality))
+        return false;
       if (filters.priceMin) {
         const min = parsePrice(filters.priceMin);
         if (parsePrice(p.price) < min) return false;

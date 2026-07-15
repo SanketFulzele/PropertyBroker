@@ -2,7 +2,7 @@ export interface Property {
   id: number;
   title: string;
   location: string;
-  city: string;
+  locality: string;
   price: string;
   pricePerSqft: string;
   type: string;
@@ -23,12 +23,6 @@ export interface Property {
 export interface Stat {
   value: string;
   label: string;
-}
-
-export interface City {
-  name: string;
-  properties: string;
-  image: string;
 }
 
 export interface Locality {

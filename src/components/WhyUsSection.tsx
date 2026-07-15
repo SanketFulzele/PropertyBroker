@@ -22,8 +22,8 @@ export default function WhyUsSection() {
     },
     {
       icon: Trophy,
-      title: "1.2M+ Transactions",
-      desc: "India's most trusted platform with over a decade of real estate expertise.",
+      title: "12,000+ Happy Families",
+      desc: "Nagpur's most trusted platform helping families find their perfect home.",
     },
   ];
 
@@ -79,7 +79,7 @@ export default function WhyUsSection() {
               margin: 0,
             }}
           >
-            Built for India's homebuyers. Trusted by millions.
+            Built for Nagpur's homebuyers. Trusted by thousands.
           </p>
         </div>
 

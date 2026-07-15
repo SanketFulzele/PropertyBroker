@@ -45,7 +45,7 @@ export default function Footer() {
             </div>
 
             <p className="footer-description">
-              India's most trusted real estate platform. Find, buy, rent and sell properties with confidence.
+              Nagpur's most trusted real estate platform. Find, buy, rent and sell properties with confidence.
             </p>
           </div>
 
@@ -70,7 +70,7 @@ export default function Footer() {
           </p>
 
           <p className="footer-made">
-            🇮🇳 Made for India
+            Made for Nagpur
           </p>
         </div>
       </div>

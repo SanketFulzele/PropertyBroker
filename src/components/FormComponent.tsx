@@ -89,7 +89,7 @@ export default function FormComponent() {
 
           <ul className="form-features">
             {[
-              { icon: "🏙️", text: "Pan-India listings — 50+ cities" },
+              { icon: "🏙️", text: "Nagpur's largest property platform" },
               { icon: "✅", text: "100% RERA-verified projects" },
               { icon: "🤝", text: "Zero brokerage on select properties" },
             ].map(({ icon, text }) => (

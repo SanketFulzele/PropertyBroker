@@ -4,10 +4,12 @@ import PropertyCard from "../components/PropertyCard";
 import FilterSidebar from "../components/FilterSidebar";
 import { EmptyState } from "../baseComponents";
 import { usePropertyFilters } from "../utils/usePropertyFilters";
+import { useLocalityFilter } from "../hooks/useUrlFilters";
 import "../styles/filterPage.css";
 
 export default function FilterPage() {
-  const { filters, setFilter, clearAll, filtered, total, shown } = usePropertyFilters(FILTER_PROPERTIES);
+  const { locality: urlLocality, setLocality: setUrlLocality, clearLocality } = useLocalityFilter();
+  const { filters, setFilter, clearAll, filtered, total, shown } = usePropertyFilters(FILTER_PROPERTIES, urlLocality);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const hasActiveFilters =
@@ -15,7 +17,7 @@ export default function FilterPage() {
     filters.bhk.length > 0 ||
     filters.furnished.length > 0 ||
     filters.availability.length > 0 ||
-    filters.city.length > 0 ||
+    filters.locality.length > 0 ||
     filters.priceMin !== "" ||
     filters.priceMax !== "";
 
@@ -41,7 +43,7 @@ export default function FilterPage() {
             selectedAvailability={filters.availability}
             selectedParking={filters.parking}
             selectedAmenities={[]}
-            selectedCity={filters.city.length > 0 ? filters.city[0] : ""}
+            selectedLocality={filters.locality.length > 0 ? filters.locality[0] : ""}
             priceMin={filters.priceMin}
             priceMax={filters.priceMax}
             onTypeChange={(v) => setFilter("propertyType", v)}
@@ -50,10 +52,16 @@ export default function FilterPage() {
             onAvailabilityChange={(v) => setFilter("availability", v)}
             onParkingChange={(v) => setFilter("parking", v)}
             onAmenitiesChange={() => {}}
-            onCityChange={(v) => setFilter("city", v ? [v] : [])}
+            onLocalityChange={(v) => {
+              setFilter("locality", v ? [v] : []);
+              setUrlLocality(v);
+            }}
             onPriceMinChange={(v) => setFilter("priceMin", v)}
             onPriceMaxChange={(v) => setFilter("priceMax", v)}
-            onClear={clearAll}
+            onClear={() => {
+              clearAll();
+              clearLocality();
+            }}
           />
         </aside>
 
@@ -98,7 +106,7 @@ export default function FilterPage() {
               title="No properties found"
               description="Try adjusting your filters or clear them to see all available properties."
               buttonText="Clear All Filters"
-              onButtonClick={clearAll}
+              onButtonClick={() => { clearAll(); clearLocality(); }}
             />
           ) : (
             <div className="filter-property-grid">
@@ -137,7 +145,7 @@ export default function FilterPage() {
           selectedAvailability={filters.availability}
           selectedParking={filters.parking}
           selectedAmenities={[]}
-          selectedCity={filters.city.length > 0 ? filters.city[0] : ""}
+          selectedLocality={filters.locality.length > 0 ? filters.locality[0] : ""}
           priceMin={filters.priceMin}
           priceMax={filters.priceMax}
           onTypeChange={(v) => setFilter("propertyType", v)}
@@ -146,11 +154,15 @@ export default function FilterPage() {
           onAvailabilityChange={(v) => setFilter("availability", v)}
           onParkingChange={(v) => setFilter("parking", v)}
           onAmenitiesChange={() => {}}
-          onCityChange={(v) => setFilter("city", v ? [v] : [])}
+          onLocalityChange={(v) => {
+            setFilter("locality", v ? [v] : []);
+            setUrlLocality(v);
+          }}
           onPriceMinChange={(v) => setFilter("priceMin", v)}
           onPriceMaxChange={(v) => setFilter("priceMax", v)}
           onClear={() => {
             clearAll();
+            clearLocality();
             setDrawerOpen(false);
           }}
         />

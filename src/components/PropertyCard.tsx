@@ -146,7 +146,7 @@ export default function PropertyCard({
           {[
             { icon: "🛏", val: prop.bhk },
             { icon: "📐", val: prop.area },
-            { icon: "🏙", val: prop.city },
+            { icon: "📍", val: prop.locality },
           ].map((item, i) => (
             <div
               key={i}

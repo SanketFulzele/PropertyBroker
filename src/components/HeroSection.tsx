@@ -1,9 +1,11 @@
 import { useState } from "react";
-import { CITIES } from "../data/data";
+import { useNavigate } from "react-router-dom";
+import { NAGPUR_LOCALITY_NAMES } from "../data/nagpurLocalities";
 
 export default function HeroSection() {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<"Buy" | "Rent" | "Sell">("Buy");
-  const [searchCity, setSearchCity] = useState("Mumbai");
+  const [searchLocality, setSearchLocality] = useState("Manish Nagar");
 
   return (
     <section
@@ -134,7 +136,7 @@ export default function HeroSection() {
             marginBottom: 44,
           }}
         >
-          Discover 2.5 lakh+ verified properties across 50+ Indian cities.
+          Discover 2,500+ verified properties across Nagpur's finest localities.
           <br />Your dream home is one search away.
         </p>
 
@@ -189,8 +191,8 @@ export default function HeroSection() {
             }}
           >
             <select
-              value={searchCity}
-              onChange={(e) => setSearchCity(e.target.value)}
+              value={searchLocality}
+              onChange={(e) => setSearchLocality(e.target.value)}
               style={{
                 padding: "14px 16px",
                 border: "1.5px solid #e2e8f0",
@@ -204,8 +206,8 @@ export default function HeroSection() {
                 outline: "none",
               }}
             >
-              {CITIES.map((c) => (
-                <option key={c.name}>{c.name}</option>
+              {NAGPUR_LOCALITY_NAMES.map((loc) => (
+                <option key={loc} value={loc}>{loc}</option>
               ))}
             </select>
 
@@ -225,6 +227,7 @@ export default function HeroSection() {
             />
 
             <button
+              onClick={() => navigate(`/filter?locality=${encodeURIComponent(searchLocality)}`)}
               style={{
                 padding: "14px 28px",
                 borderRadius: "0 10px 10px 0",

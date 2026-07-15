@@ -1,4 +1,5 @@
 import { CheckboxGroup } from "../baseComponents";
+import { NAGPUR_LOCALITY_NAMES } from "../data/nagpurLocalities";
 
 interface FilterSidebarProps {
   selectedTypes: string[];
@@ -7,7 +8,7 @@ interface FilterSidebarProps {
   selectedAvailability: string[];
   selectedParking: string[];
   selectedAmenities: string[];
-  selectedCity: string;
+  selectedLocality: string;
   priceMin: string;
   priceMax: string;
   onTypeChange: (types: string[]) => void;
@@ -16,7 +17,7 @@ interface FilterSidebarProps {
   onAvailabilityChange: (availability: string[]) => void;
   onParkingChange: (parking: string[]) => void;
   onAmenitiesChange: (amenities: string[]) => void;
-  onCityChange: (city: string) => void;
+  onLocalityChange: (locality: string) => void;
   onPriceMinChange: (val: string) => void;
   onPriceMaxChange: (val: string) => void;
   onClear: () => void;
@@ -28,7 +29,6 @@ const FURNISHING_OPTIONS = ["Furnished", "Semi Furnished", "Unfurnished"];
 const AVAILABILITY_OPTIONS = ["Ready to Move", "Under Construction"];
 const PARKING_OPTIONS = ["Covered", "Open", "None"];
 const AMENITY_OPTIONS = ["Gym", "Lift", "Garden", "Swimming Pool", "Club House", "Security"];
-const CITY_OPTIONS = ["Mumbai", "Bengaluru", "Delhi", "Pune"];
 
 export default function FilterSidebar({
   selectedTypes,
@@ -37,7 +37,7 @@ export default function FilterSidebar({
   selectedAvailability,
   selectedParking,
   selectedAmenities,
-  selectedCity,
+  selectedLocality,
   priceMin,
   priceMax,
   onTypeChange,
@@ -46,7 +46,7 @@ export default function FilterSidebar({
   onAvailabilityChange,
   onParkingChange,
   onAmenitiesChange,
-  onCityChange,
+  onLocalityChange,
   onPriceMinChange,
   onPriceMaxChange,
   onClear,
@@ -121,6 +121,31 @@ export default function FilterSidebar({
         style={{ height: 1, background: "#e2e8f0", margin: "-4px 0" }}
       />
 
+       <div>
+        <div style={sectionLabelStyle}>Locality</div>
+        <select
+          value={selectedLocality}
+          onChange={(e) => onLocalityChange(e.target.value)}
+          style={{
+            ...inputStyle,
+            cursor: "pointer",
+            appearance: "none" as const,
+            backgroundImage:
+              "url(\"data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%2394a3b8' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E\")",
+            backgroundRepeat: "no-repeat",
+            backgroundPosition: "right 14px center",
+            paddingRight: 38,
+          }}
+        >
+          <option value="">All Localities</option>
+          {NAGPUR_LOCALITY_NAMES.map((loc) => (
+            <option key={loc} value={loc}>
+              {loc}
+            </option>
+          ))}
+        </select>
+      </div>
+
       <div>
         <div style={sectionLabelStyle}>Property Type</div>
         <CheckboxGroup
@@ -177,31 +202,6 @@ export default function FilterSidebar({
           onChange={onBhkChange}
           maxVisible={10}
         />
-      </div>
-
-      <div>
-        <div style={sectionLabelStyle}>Location</div>
-        <select
-          value={selectedCity}
-          onChange={(e) => onCityChange(e.target.value)}
-          style={{
-            ...inputStyle,
-            cursor: "pointer",
-            appearance: "none" as const,
-            backgroundImage:
-              "url(\"data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%2394a3b8' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E\")",
-            backgroundRepeat: "no-repeat",
-            backgroundPosition: "right 14px center",
-            paddingRight: 38,
-          }}
-        >
-          <option value="">All Cities</option>
-          {CITY_OPTIONS.map((city) => (
-            <option key={city} value={city}>
-              {city}
-            </option>
-          ))}
-        </select>
       </div>
 
       <div>

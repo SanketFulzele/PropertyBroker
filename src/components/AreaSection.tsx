@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useIntersectionObserver } from "../hooks/hooks";
 import { NAGPUR_LOCALITIES } from "../data/data";
 import type { Locality } from "../types/types";
@@ -13,6 +14,7 @@ function LocalityCard({
   visible: boolean;
   index: number;
 }) {
+  const navigate = useNavigate();
   const [hovered, setHovered] = useState(false);
 
   return (
@@ -56,7 +58,10 @@ function LocalityCard({
           </div>
         </div>
 
-        <button className="locality-card-cta">
+        <button
+          className="locality-card-cta"
+          onClick={() => navigate(`/filter?locality=${encodeURIComponent(locality.name)}`)}
+        >
           Explore
           <span
             className="locality-card-cta-arrow"
