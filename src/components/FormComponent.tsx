@@ -30,7 +30,6 @@ export default function FormComponent() {
       alert("Please fill all required fields");
       return;
     }
-
     setLoading(true);
 
     try {
