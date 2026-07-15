@@ -20,6 +20,7 @@ function LocalityCard({
   return (
     <div
       className="locality-card"
+      onClick={() => navigate(`/filter?locality=${encodeURIComponent(locality.name)}`)}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
@@ -60,7 +61,6 @@ function LocalityCard({
 
         <button
           className="locality-card-cta"
-          onClick={() => navigate(`/filter?locality=${encodeURIComponent(locality.name)}`)}
         >
           Explore
           <span
