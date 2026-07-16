@@ -1,7 +1,10 @@
+import { useNavigate } from "react-router-dom";
 import { useIntersectionObserver } from "../hooks/hooks";
+import { openWhatsApp } from "../utils/contact";
 
 export default function CTASection() {
   const { ref, visible } = useIntersectionObserver();
+  const navigate = useNavigate();
 
   return (
     <section
@@ -82,6 +85,7 @@ export default function CTASection() {
           }}
         >
           <button
+            onClick={() => navigate("/filter")}
             style={{
               padding: "16px 36px",
               borderRadius: 12,
@@ -101,6 +105,7 @@ export default function CTASection() {
             Browse Properties →
           </button>
           <button
+            onClick={() => openWhatsApp({ source: "hero" })}
             style={{
               padding: "16px 36px",
               borderRadius: 12,
