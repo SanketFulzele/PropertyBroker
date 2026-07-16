@@ -1,6 +1,7 @@
 import type { Property, Stat, Locality } from "../types/types";
+import { enrichProperties } from "../utils/propertyEnricher";
 
-export const PROPERTIES: Property[] = [
+const RAW_PROPERTIES = [
   {
     id: 1,
     title: "Vrindavan Heights",
@@ -21,6 +22,11 @@ export const PROPERTIES: Property[] = [
     possession: "Immediate",
     parking: "Covered",
     description: "Spacious 2 BHK apartment near Manish Nagar with modern amenities and green surroundings.",
+    propertyAge: "New Construction",
+    facing: "East",
+    ownership: "Freehold",
+    bathrooms: 2,
+    floor: "3rd Floor",
   },
   {
     id: 2,
@@ -39,9 +45,14 @@ export const PROPERTIES: Property[] = [
     builder: "Green Infra Realty",
     furnished: "Unfurnished",
     availability: "Under Construction",
-    possession: "Dec 2026",
+    possession: "Within 6 Months",
     parking: "Covered",
     description: "Modern 2 BHK in a serene locality with excellent social infrastructure nearby.",
+    propertyAge: "New Construction",
+    facing: "North",
+    ownership: "Freehold",
+    bathrooms: 2,
+    floor: "5th Floor",
   },
   {
     id: 3,
@@ -63,6 +74,11 @@ export const PROPERTIES: Property[] = [
     possession: "Immediate",
     parking: "Covered",
     description: "Premium villa in Beltarodi with landscaped gardens and world-class amenities.",
+    propertyAge: "1-5 Years",
+    facing: "South",
+    ownership: "Freehold",
+    bathrooms: 3,
+    floor: "Ground Floor",
   },
   {
     id: 4,
@@ -84,6 +100,11 @@ export const PROPERTIES: Property[] = [
     possession: "Immediate",
     parking: "Covered",
     description: "Well-connected 2 BHK near MIHAN airport with smart home features.",
+    propertyAge: "New Construction",
+    facing: "East",
+    ownership: "Freehold",
+    bathrooms: 2,
+    floor: "4th Floor",
   },
   {
     id: 5,
@@ -105,6 +126,11 @@ export const PROPERTIES: Property[] = [
     possession: "Immediate",
     parking: "Covered",
     description: "Luxury 3 BHK on Wardha Road with panoramic city views and premium finishes.",
+    propertyAge: "1-5 Years",
+    facing: "North-East",
+    ownership: "Freehold",
+    bathrooms: 3,
+    floor: "8th Floor",
   },
   {
     id: 6,
@@ -126,8 +152,15 @@ export const PROPERTIES: Property[] = [
     possession: "Immediate",
     parking: "Covered",
     description: "Ultra-luxury apartment in Nagpur's most upscale neighborhood with premium amenities.",
+    propertyAge: "New Construction",
+    facing: "West",
+    ownership: "Freehold",
+    bathrooms: 3,
+    floor: "10th Floor+",
   },
 ];
+
+export const PROPERTIES: Property[] = enrichProperties(RAW_PROPERTIES as any[]);
 
 export const STATS: Stat[] = [
   { value: "2,500+", label: "Active Listings" },

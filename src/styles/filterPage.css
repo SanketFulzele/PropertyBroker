@@ -48,6 +48,36 @@
   margin: 0;
 }
 
+/* --- Breadcrumb ---------------------------------------------- */
+.filter-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+}
+
+.filter-breadcrumb-link {
+  color: #64748b;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.filter-breadcrumb-link:hover {
+  color: #2563eb;
+}
+
+.filter-breadcrumb-sep {
+  color: #cbd5e1;
+  font-weight: 500;
+}
+
+.filter-breadcrumb-current {
+  color: #1a3c5e;
+  font-weight: 600;
+}
+
 /* --- Layout ------------------------------------------------- */
 .filter-layout {
   display: flex;
@@ -59,29 +89,39 @@
 
 /* --- Sidebar ------------------------------------------------ */
 .filter-sidebar {
-  width: 300px;
+  width: 320px;
   flex-shrink: 0;
   background: #fff;
   border-radius: 20px;
   border: 1px solid #f1f5f9;
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
-  padding: 28px;
+  padding: 28px 24px 28px 28px;
   align-self: flex-start;
   position: sticky;
   top: 100px;
   max-height: calc(100vh - 120px);
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
 }
 
-.filter-sidebar::-webkit-scrollbar {
+.filter-sidebar-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  margin-bottom: 0;
+  min-width: 0;
+  padding-right: 4px;
+}
+
+.filter-sidebar-content::-webkit-scrollbar {
   width: 4px;
 }
 
-.filter-sidebar::-webkit-scrollbar-track {
+.filter-sidebar-content::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.filter-sidebar::-webkit-scrollbar-thumb {
+.filter-sidebar-content::-webkit-scrollbar-thumb {
   background: #cbd5e1;
   border-radius: 2px;
 }
@@ -221,7 +261,7 @@
   position: fixed;
   top: 0;
   left: 0;
-  width: 320px;
+  width: 340px;
   max-width: 85vw;
   height: 100vh;
   background: #fff;
@@ -229,11 +269,21 @@
   transform: translateX(-100%);
   transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   overflow-y: auto;
-  padding: 24px;
+  padding: 24px 20px 24px 24px;
+  display: flex;
+  flex-direction: column;
 }
 
 .filter-drawer.active {
   transform: translateX(0);
+}
+
+.filter-drawer-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  min-width: 0;
+  padding-right: 4px;
 }
 
 .filter-drawer-close {
@@ -270,8 +320,8 @@
   }
 
   .filter-sidebar {
-    width: 260px;
-    padding: 24px;
+    width: 280px;
+    padding: 24px 20px 24px 24px;
   }
 
   .filter-property-grid {
@@ -332,7 +382,7 @@
   }
 
   .filter-drawer {
-    width: 290px;
-    padding: 20px;
+    width: 310px;
+    padding: 20px 16px 20px 20px;
   }
 }

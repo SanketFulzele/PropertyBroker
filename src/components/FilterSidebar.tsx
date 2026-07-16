@@ -1,79 +1,37 @@
-import { CheckboxGroup } from "../baseComponents";
 import { NAGPUR_LOCALITY_NAMES } from "../data/nagpurLocalities";
+import type { FilterState } from "../utils/usePropertyFilters";
+import { CheckboxGroup, RangeSlider } from "../baseComponents";
 
 interface FilterSidebarProps {
-  selectedTypes: string[];
-  selectedBhk: string[];
-  selectedFurnishing: string[];
-  selectedAvailability: string[];
-  selectedParking: string[];
-  selectedAmenities: string[];
-  selectedLocality: string;
-  priceMin: string;
-  priceMax: string;
-  onTypeChange: (types: string[]) => void;
-  onBhkChange: (bhk: string[]) => void;
-  onFurnishingChange: (furnishing: string[]) => void;
-  onAvailabilityChange: (availability: string[]) => void;
-  onParkingChange: (parking: string[]) => void;
-  onAmenitiesChange: (amenities: string[]) => void;
-  onLocalityChange: (locality: string) => void;
-  onPriceMinChange: (val: string) => void;
-  onPriceMaxChange: (val: string) => void;
+  filters: FilterState;
+  onFilterChange: <K extends keyof FilterState>(key: K, value: FilterState[K]) => void;
   onClear: () => void;
 }
 
+const LOCALITY_OPTIONS = NAGPUR_LOCALITY_NAMES.map((name) => name);
 const PROPERTY_TYPES = ["Apartment", "Villa", "Plot", "Commercial"];
 const BHK_OPTIONS = ["1 BHK", "2 BHK", "3 BHK", "4+ BHK"];
 const FURNISHING_OPTIONS = ["Furnished", "Semi Furnished", "Unfurnished"];
+const POSSESSION_OPTIONS = ["Immediate", "Within 3 Months", "Within 6 Months", "Within 1 Year", "After 1 Year"];
 const AVAILABILITY_OPTIONS = ["Ready to Move", "Under Construction"];
+const PROPERTY_AGE_OPTIONS = ["New Construction", "1-5 Years", "5-10 Years", "10-20 Years", "20+ Years"];
+const FACING_OPTIONS = ["North", "South", "East", "West", "North-East", "North-West", "South-East", "South-West"];
+const OWNERSHIP_OPTIONS = ["Freehold", "Leasehold", "Co-operative Society"];
 const PARKING_OPTIONS = ["Covered", "Open", "None"];
-const AMENITY_OPTIONS = ["Gym", "Lift", "Garden", "Swimming Pool", "Club House", "Security"];
+const BATHROOM_OPTIONS = [1, 2, 3, 4];
+const FLOOR_OPTIONS = ["Ground Floor", "1st Floor", "2nd Floor", "3rd Floor", "4th Floor", "5th Floor", "6th Floor+"];
 
-export default function FilterSidebar({
-  selectedTypes,
-  selectedBhk,
-  selectedFurnishing,
-  selectedAvailability,
-  selectedParking,
-  selectedAmenities,
-  selectedLocality,
-  priceMin,
-  priceMax,
-  onTypeChange,
-  onBhkChange,
-  onFurnishingChange,
-  onAvailabilityChange,
-  onParkingChange,
-  onAmenitiesChange,
-  onLocalityChange,
-  onPriceMinChange,
-  onPriceMaxChange,
-  onClear,
-}: FilterSidebarProps) {
-  const inputStyle: React.CSSProperties = {
-    width: "100%",
-    padding: "10px 14px",
-    border: "1.5px solid #e2e8f0",
-    borderRadius: 10,
-    fontSize: 14,
-    fontFamily: "'DM Sans', sans-serif",
-    color: "#1a3c5e",
-    background: "#f8fafc",
-    outline: "none",
-    transition: "border-color 0.2s, box-shadow 0.2s",
-  };
+const formatBudget = (val: number): string => {
+  if (val >= 10000000) return `₹${(val / 10000000).toFixed(1)} Cr`;
+  if (val >= 100000) return `₹${(val / 100000).toFixed(0)} L`;
+  return `₹${val.toLocaleString()}`;
+};
 
-  const sectionLabelStyle: React.CSSProperties = {
-    fontFamily: "'Playfair Display', Georgia, serif",
-    fontSize: 16,
-    fontWeight: 700,
-    color: "#1a3c5e",
-    marginBottom: 14,
-  };
+const formatArea = (val: number): string => `${val} sqft`;
 
+export default function FilterSidebar({ filters, onFilterChange, onClear }: FilterSidebarProps) {
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
       <div
         style={{
           display: "flex",
@@ -117,158 +75,129 @@ export default function FilterSidebar({
         </button>
       </div>
 
-      <div
-        style={{ height: 1, background: "#e2e8f0", margin: "-4px 0" }}
+      <div style={{ height: 1, background: "#e2e8f0", margin: "-4px 0" }} />
+
+      <CheckboxGroup
+        label="Locality"
+        options={LOCALITY_OPTIONS}
+        selected={filters.locality}
+        onChange={(value) => onFilterChange("locality", value)}
+        maxVisible={6}
       />
 
-       <div>
-        <div style={sectionLabelStyle}>Locality</div>
-        <select
-          value={selectedLocality}
-          onChange={(e) => onLocalityChange(e.target.value)}
-          style={{
-            ...inputStyle,
-            cursor: "pointer",
-            appearance: "none" as const,
-            backgroundImage:
-              "url(\"data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%2394a3b8' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E\")",
-            backgroundRepeat: "no-repeat",
-            backgroundPosition: "right 14px center",
-            paddingRight: 38,
-          }}
-        >
-          <option value="">All Localities</option>
-          {NAGPUR_LOCALITY_NAMES.map((loc) => (
-            <option key={loc} value={loc}>
-              {loc}
-            </option>
-          ))}
-        </select>
-      </div>
+      <CheckboxGroup
+        label="Property Type"
+        options={PROPERTY_TYPES}
+        selected={filters.propertyType}
+        onChange={(value) => onFilterChange("propertyType", value)}
+        maxVisible={10}
+      />
 
-      <div>
-        <div style={sectionLabelStyle}>Property Type</div>
-        <CheckboxGroup
-          label=""
-          options={PROPERTY_TYPES}
-          selected={selectedTypes}
-          onChange={onTypeChange}
-          maxVisible={10}
-        />
-      </div>
+      <CheckboxGroup
+        label="BHK"
+        options={BHK_OPTIONS}
+        selected={filters.bhk}
+        onChange={(value) => onFilterChange("bhk", value)}
+        maxVisible={10}
+      />
 
-      <div>
-        <div style={sectionLabelStyle}>Price Range</div>
-        <div style={{ display: "flex", gap: 10 }}>
-          <input
-            type="text"
-            placeholder="Min (e.g. 50 L)"
-            value={priceMin}
-            onChange={(e) => onPriceMinChange(e.target.value)}
-            style={inputStyle}
-            onFocus={(e) => {
-              e.target.style.borderColor = "#2563eb";
-              e.target.style.boxShadow = "0 0 0 3px rgba(37,99,235,0.1)";
-            }}
-            onBlur={(e) => {
-              e.target.style.borderColor = "#e2e8f0";
-              e.target.style.boxShadow = "none";
-            }}
-          />
-          <input
-            type="text"
-            placeholder="Max (e.g. 3 Cr)"
-            value={priceMax}
-            onChange={(e) => onPriceMaxChange(e.target.value)}
-            style={inputStyle}
-            onFocus={(e) => {
-              e.target.style.borderColor = "#2563eb";
-              e.target.style.boxShadow = "0 0 0 3px rgba(37,99,235,0.1)";
-            }}
-            onBlur={(e) => {
-              e.target.style.borderColor = "#e2e8f0";
-              e.target.style.boxShadow = "none";
-            }}
-          />
-        </div>
-      </div>
+      <RangeSlider
+        label="Budget"
+        min={500000}
+        max={50000000}
+        value={[filters.budgetMin, filters.budgetMax]}
+        onChange={(value) => {
+          onFilterChange("budgetMin", value[0]);
+          onFilterChange("budgetMax", value[1]);
+        }}
+        formatValue={formatBudget}
+        step={500000}
+      />
 
-      <div>
-        <div style={sectionLabelStyle}>BHK</div>
-        <CheckboxGroup
-          label=""
-          options={BHK_OPTIONS}
-          selected={selectedBhk}
-          onChange={onBhkChange}
-          maxVisible={10}
-        />
-      </div>
+      <RangeSlider
+        label="Area (sqft)"
+        min={300}
+        max={6000}
+        value={[filters.areaMin, filters.areaMax]}
+        onChange={(value) => {
+          onFilterChange("areaMin", value[0]);
+          onFilterChange("areaMax", value[1]);
+        }}
+        formatValue={formatArea}
+        step={100}
+      />
 
-      <div>
-        <div style={sectionLabelStyle}>Furnishing</div>
-        <CheckboxGroup
-          label=""
-          options={FURNISHING_OPTIONS}
-          selected={selectedFurnishing}
-          onChange={onFurnishingChange}
-          maxVisible={10}
-        />
-      </div>
+      <CheckboxGroup
+        label="Furnishing"
+        options={FURNISHING_OPTIONS}
+        selected={filters.furnished}
+        onChange={(value) => onFilterChange("furnished", value)}
+        maxVisible={10}
+      />
 
-      <div>
-        <div style={sectionLabelStyle}>Availability</div>
-        <CheckboxGroup
-          label=""
-          options={AVAILABILITY_OPTIONS}
-          selected={selectedAvailability}
-          onChange={onAvailabilityChange}
-          maxVisible={10}
-        />
-      </div>
+      <CheckboxGroup
+        label="Possession Status"
+        options={POSSESSION_OPTIONS}
+        selected={filters.possession}
+        onChange={(value) => onFilterChange("possession", value)}
+        maxVisible={10}
+      />
 
-      <div>
-        <div style={sectionLabelStyle}>Possession</div>
-        <select
-          value=""
-          style={{
-            ...inputStyle,
-            cursor: "pointer",
-            appearance: "none" as const,
-            backgroundImage:
-              "url(\"data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%2394a3b8' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E\")",
-            backgroundRepeat: "no-repeat",
-            backgroundPosition: "right 14px center",
-            paddingRight: 38,
-          }}
-        >
-          <option value="">Any Time</option>
-          <option value="Immediate">Immediate</option>
-          <option value="2026">2026</option>
-          <option value="2027">2027</option>
-        </select>
-      </div>
+      <CheckboxGroup
+        label="Availability"
+        options={AVAILABILITY_OPTIONS}
+        selected={filters.availability}
+        onChange={(value) => onFilterChange("availability", value)}
+        maxVisible={10}
+      />
 
-      <div>
-        <div style={sectionLabelStyle}>Parking</div>
-        <CheckboxGroup
-          label=""
-          options={PARKING_OPTIONS}
-          selected={selectedParking}
-          onChange={onParkingChange}
-          maxVisible={10}
-        />
-      </div>
+      <CheckboxGroup
+        label="Property Age"
+        options={PROPERTY_AGE_OPTIONS}
+        selected={filters.propertyAge}
+        onChange={(value) => onFilterChange("propertyAge", value)}
+        maxVisible={10}
+      />
 
-      <div>
-        <div style={sectionLabelStyle}>Amenities</div>
-        <CheckboxGroup
-          label=""
-          options={AMENITY_OPTIONS}
-          selected={selectedAmenities}
-          onChange={onAmenitiesChange}
-          maxVisible={10}
-        />
-      </div>
+      <CheckboxGroup
+        label="Facing"
+        options={FACING_OPTIONS}
+        selected={filters.facing}
+        onChange={(value) => onFilterChange("facing", value)}
+        maxVisible={10}
+      />
+
+      <CheckboxGroup
+        label="Ownership"
+        options={OWNERSHIP_OPTIONS}
+        selected={filters.ownership}
+        onChange={(value) => onFilterChange("ownership", value)}
+        maxVisible={10}
+      />
+
+      <CheckboxGroup
+        label="Parking"
+        options={PARKING_OPTIONS}
+        selected={filters.parking}
+        onChange={(value) => onFilterChange("parking", value)}
+        maxVisible={10}
+      />
+
+      <CheckboxGroup
+        label="Bathrooms"
+        options={BATHROOM_OPTIONS.map(String)}
+        selected={filters.bathrooms.map(String)}
+        onChange={(value) => onFilterChange("bathrooms", value.map(Number))}
+        maxVisible={10}
+      />
+
+      <CheckboxGroup
+        label="Floor"
+        options={FLOOR_OPTIONS}
+        selected={filters.floor}
+        onChange={(value) => onFilterChange("floor", value)}
+        maxVisible={10}
+      />
     </div>
   );
 }

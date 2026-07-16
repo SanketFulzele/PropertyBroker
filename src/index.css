@@ -50,3 +50,37 @@
     background: #cbd5e1;
     border-radius: 3px;
   }
+
+  /* Range Slider Native Thumbs Overrides */
+  input[type="range"]::-webkit-slider-thumb {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    pointer-events: auto;
+  }
+
+  input[type="range"]::-moz-range-thumb {
+    appearance: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    pointer-events: auto;
+  }
+
+  input[type="range"]::-webkit-slider-runnable-track {
+    background: transparent;
+    border: none;
+  }
+
+  input[type="range"]::-moz-range-track {
+    background: transparent;
+    border: none;
+  }

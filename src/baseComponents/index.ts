@@ -6,3 +6,5 @@ export { default as EmptyState } from "./EmptyState";
 export { default as Logo } from "./Logo";
 export { default as FeatureCard } from "./FeatureCard";
 export { default as CheckboxGroup } from "./CheckboxGroup";
+export { default as SearchableMultiSelect } from "./SearchableMultiSelect";
+export { default as RangeSlider } from "./RangeSlider";

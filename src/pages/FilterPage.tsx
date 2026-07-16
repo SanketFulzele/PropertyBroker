@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { FILTER_PROPERTIES } from "../data/filterProperties";
 import PropertyCard from "../components/PropertyCard";
 import FilterSidebar from "../components/FilterSidebar";
@@ -9,21 +10,25 @@ import "../styles/filterPage.css";
 
 export default function FilterPage() {
   const { locality: urlLocality, setLocality: setUrlLocality, clearLocality } = useLocalityFilter();
-  const { filters, setFilter, clearAll, filtered, total, shown } = usePropertyFilters(FILTER_PROPERTIES, urlLocality);
+  const { filters, setFilter, clearAll, filtered, hasActiveFilters, total, shown } = usePropertyFilters(FILTER_PROPERTIES, urlLocality);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
-  const hasActiveFilters =
-    filters.propertyType.length > 0 ||
-    filters.bhk.length > 0 ||
-    filters.furnished.length > 0 ||
-    filters.availability.length > 0 ||
-    filters.locality.length > 0 ||
-    filters.priceMin !== "" ||
-    filters.priceMax !== "";
+  const activeLocality = filters.locality.length === 1 ? filters.locality[0] : null;
 
   return (
     <div className="filter-page">
       <div className="filter-header">
+        <nav className="filter-breadcrumb">
+          <Link to="/" className="filter-breadcrumb-link">Home</Link>
+          <span className="filter-breadcrumb-sep">/</span>
+          <Link to="/filter" className="filter-breadcrumb-link">Properties</Link>
+          {activeLocality && (
+            <>
+              <span className="filter-breadcrumb-sep">/</span>
+              <span className="filter-breadcrumb-current">{activeLocality}</span>
+            </>
+          )}
+        </nav>
         <div className="filter-header-badge">Browse Properties</div>
         <h1 className="filter-header-title">
           Find Your Perfect{" "}
@@ -36,33 +41,23 @@ export default function FilterPage() {
 
       <div className="filter-layout">
         <aside className="filter-sidebar">
-          <FilterSidebar
-            selectedTypes={filters.propertyType}
-            selectedBhk={filters.bhk}
-            selectedFurnishing={filters.furnished}
-            selectedAvailability={filters.availability}
-            selectedParking={filters.parking}
-            selectedAmenities={[]}
-            selectedLocality={filters.locality.length > 0 ? filters.locality[0] : ""}
-            priceMin={filters.priceMin}
-            priceMax={filters.priceMax}
-            onTypeChange={(v) => setFilter("propertyType", v)}
-            onBhkChange={(v) => setFilter("bhk", v)}
-            onFurnishingChange={(v) => setFilter("furnished", v)}
-            onAvailabilityChange={(v) => setFilter("availability", v)}
-            onParkingChange={(v) => setFilter("parking", v)}
-            onAmenitiesChange={() => {}}
-            onLocalityChange={(v) => {
-              setFilter("locality", v ? [v] : []);
-              setUrlLocality(v);
-            }}
-            onPriceMinChange={(v) => setFilter("priceMin", v)}
-            onPriceMaxChange={(v) => setFilter("priceMax", v)}
-            onClear={() => {
-              clearAll();
-              clearLocality();
-            }}
-          />
+          <div className="filter-sidebar-content">
+            <FilterSidebar
+              filters={filters}
+              onFilterChange={(key, value) => {
+                setFilter(key, value);
+                if (key === "locality" && Array.isArray(value) && value.length === 1) {
+                  setUrlLocality(value[0] as string);
+                } else if (key === "locality" && Array.isArray(value) && value.length === 0) {
+                  clearLocality();
+                }
+              }}
+              onClear={() => {
+                clearAll();
+                clearLocality();
+              }}
+            />
+          </div>
         </aside>
 
         <div className="filter-main">
@@ -138,34 +133,23 @@ export default function FilterPage() {
             <line x1="6" y1="6" x2="18" y2="18" />
           </svg>
         </button>
-        <FilterSidebar
-          selectedTypes={filters.propertyType}
-          selectedBhk={filters.bhk}
-          selectedFurnishing={filters.furnished}
-          selectedAvailability={filters.availability}
-          selectedParking={filters.parking}
-          selectedAmenities={[]}
-          selectedLocality={filters.locality.length > 0 ? filters.locality[0] : ""}
-          priceMin={filters.priceMin}
-          priceMax={filters.priceMax}
-          onTypeChange={(v) => setFilter("propertyType", v)}
-          onBhkChange={(v) => setFilter("bhk", v)}
-          onFurnishingChange={(v) => setFilter("furnished", v)}
-          onAvailabilityChange={(v) => setFilter("availability", v)}
-          onParkingChange={(v) => setFilter("parking", v)}
-          onAmenitiesChange={() => {}}
-          onLocalityChange={(v) => {
-            setFilter("locality", v ? [v] : []);
-            setUrlLocality(v);
-          }}
-          onPriceMinChange={(v) => setFilter("priceMin", v)}
-          onPriceMaxChange={(v) => setFilter("priceMax", v)}
-          onClear={() => {
-            clearAll();
-            clearLocality();
-            setDrawerOpen(false);
-          }}
-        />
+        <div className="filter-drawer-content">
+          <FilterSidebar
+            filters={filters}
+            onFilterChange={(key, value) => {
+              setFilter(key, value);
+              if (key === "locality" && Array.isArray(value) && value.length === 1) {
+                setUrlLocality(value[0] as string);
+              } else if (key === "locality" && Array.isArray(value) && value.length === 0) {
+                clearLocality();
+              }
+            }}
+            onClear={() => {
+              clearAll();
+              clearLocality();
+            }}
+          />
+        </div>
       </div>
     </div>
   );

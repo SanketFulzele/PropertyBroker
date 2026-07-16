@@ -19,6 +19,7 @@ export default function PropertyCard({
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
+        position: "relative",
         minWidth: width,
         borderRadius: 20,
         overflow: "hidden",
@@ -34,6 +35,19 @@ export default function PropertyCard({
         border: "1px solid #f1f5f9",
       }}
     >
+      {/* Stretched Link Overlay for Card Navigation */}
+      <a
+        href={`/property/${prop.slug}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{
+          position: "absolute",
+          inset: 0,
+          zIndex: 1,
+          borderRadius: 20,
+        }}
+        aria-label={`View details of ${prop.title}`}
+      />
       <div style={{ position: "relative", height: 220, overflow: "hidden" }}>
         <img
           src={prop.image}
@@ -174,6 +188,25 @@ export default function PropertyCard({
           ))}
         </div>
 
+        {prop.bathrooms > 0 && (
+          <div
+            style={{
+              display: "flex",
+              gap: 8,
+              marginBottom: 12,
+              fontSize: 12,
+              color: "#64748b",
+              fontFamily: "'DM Sans', sans-serif",
+            }}
+          >
+            <span>{prop.bathrooms} Bath{prop.bathrooms > 1 ? "s" : ""}</span>
+            <span>·</span>
+            <span>{prop.floor}</span>
+            <span>·</span>
+            <span>{prop.facing}</span>
+          </div>
+        )}
+
         <div
           style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 18 }}
         >
@@ -202,21 +235,37 @@ export default function PropertyCard({
           )}
         </div>
 
-        <div style={{ display: "flex", gap: 10 }}>
-          <Button
-            variant="outline"
-            size="sm"
-            style={{ flex: 1, padding: "11px 0", borderRadius: 10, fontSize: 13 }}
+        <div style={{ display: "flex", gap: 10, position: "relative", zIndex: 2 }}>
+          <a
+            href={`https://wa.me/919921215145?text=${encodeURIComponent(
+              `Hello,\n\nI am interested in getting contact details for the builder of:\n\nProperty: ${prop.title}\nLocation: ${prop.locality}, ${prop.city}\nPrice: ${prop.price}\n\nCan you please assist?\n\nLink: ${window.location.origin}/property/${prop.slug}`
+            )}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ flex: 1, textDecoration: "none" }}
           >
-            Contact Builder
-          </Button>
-          <Button
-            variant="primary"
-            size="sm"
-            style={{ flex: 1, padding: "11px 0", borderRadius: 10, fontSize: 13 }}
+            <Button
+              variant="outline"
+              size="sm"
+              style={{ width: "100%", padding: "11px 0", borderRadius: 10, fontSize: 13 }}
+            >
+              Contact Builder
+            </Button>
+          </a>
+          <a
+            href={`/property/${prop.slug}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ flex: 1, textDecoration: "none" }}
           >
-            View Details
-          </Button>
+            <Button
+              variant="primary"
+              size="sm"
+              style={{ width: "100%", padding: "11px 0", borderRadius: 10, fontSize: 13 }}
+            >
+              View Details
+            </Button>
+          </a>
         </div>
       </div>
     </div>

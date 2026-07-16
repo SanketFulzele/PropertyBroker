@@ -1,0 +1,577 @@
+/* ============================================================
+   PROPERTY DETAILS PAGE STYLING
+   Palette: deep navy #1a3c5e | electric blue #2563eb | accent #eff6ff
+   Fonts: Playfair Display (headings) · DM Sans (body)
+   ============================================================ */
+
+.property-details-page {
+  min-height: 100vh;
+  background: #f8fafc;
+  padding: 100px 24px 80px;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.details-wrapper {
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+/* --- Breadcrumbs -------------------------------------------- */
+.details-breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 24px;
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.details-breadcrumbs a {
+  color: #64748b;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.details-breadcrumbs a:hover {
+  color: #2563eb;
+}
+
+/* --- Layout Grid -------------------------------------------- */
+.details-layout {
+  display: grid;
+  grid-template-columns: 7fr 4fr;
+  gap: 32px;
+  align-items: start;
+}
+
+.details-main-col {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.details-side-col {
+  position: sticky;
+  top: 100px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* --- Card & Typography Base --------------------------------- */
+.details-card {
+  background: #fff;
+  border-radius: 20px;
+  border: 1px solid #f1f5f9;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  padding: 32px;
+}
+
+.details-card-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 22px;
+  font-weight: 800;
+  color: #1a3c5e;
+  margin: 0 0 20px;
+  position: relative;
+  padding-bottom: 12px;
+}
+
+.details-card-title::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 40px;
+  height: 3px;
+  background: #2563eb;
+  border-radius: 2px;
+}
+
+/* --- Header Block ------------------------------------------- */
+.details-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+  margin-bottom: 8px;
+}
+
+.details-title-section h1 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(24px, 3.5vw, 36px);
+  font-weight: 800;
+  color: #1a3c5e;
+  margin: 0 0 8px;
+  line-height: 1.2;
+}
+
+.details-location {
+  color: #64748b;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+}
+
+.details-price-section {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.details-price {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 32px;
+  font-weight: 800;
+  color: #2563eb;
+  line-height: 1;
+}
+
+.details-price-sqft {
+  color: #64748b;
+  font-size: 13px;
+  margin-top: 6px;
+  font-weight: 600;
+}
+
+/* --- Gallery Component -------------------------------------- */
+.gallery-layout {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 16px;
+  height: 480px;
+}
+
+.gallery-thumbs-col {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow-y: auto;
+  padding-right: 4px;
+  max-height: 100%;
+}
+
+.gallery-thumbs-col::-webkit-scrollbar {
+  width: 3px;
+}
+
+.gallery-thumbs-col::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 2px;
+}
+
+.gallery-thumb-btn {
+  border: 2px solid transparent;
+  border-radius: 10px;
+  overflow: hidden;
+  height: 68px;
+  cursor: pointer;
+  padding: 0;
+  background: none;
+  flex-shrink: 0;
+  transition: all 0.25s;
+}
+
+.gallery-thumb-btn img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.gallery-thumb-btn.active {
+  border-color: #2563eb;
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);
+  transform: scale(0.95);
+}
+
+.gallery-main-viewport {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+}
+
+.gallery-main-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 0.3s ease;
+}
+
+.gallery-badge {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  z-index: 2;
+}
+
+/* --- Details Info Grid -------------------------------------- */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  border-radius: 12px;
+  background: #f8fafc;
+  border: 1px solid #f1f5f9;
+  transition: all 0.25s ease;
+}
+
+.info-item:hover {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+  transform: translateY(-2px);
+}
+
+.info-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #2563eb;
+  flex-shrink: 0;
+}
+
+.info-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.info-label {
+  font-size: 11px;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+.info-value {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1a3c5e;
+  margin-top: 2px;
+}
+
+/* --- Amenities List ----------------------------------------- */
+.amenities-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.amenity-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 100px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #475569;
+  transition: all 0.2s;
+}
+
+.amenity-chip:hover {
+  border-color: #2563eb;
+  color: #2563eb;
+  background: #eff6ff;
+}
+
+/* --- Text Blocks -------------------------------------------- */
+.description-text {
+  font-size: 15px;
+  line-height: 1.7;
+  color: #475569;
+  margin: 0;
+}
+
+.map-placeholder {
+  height: 240px;
+  border-radius: 16px;
+  background: #f1f5f9;
+  border: 1.5px dashed #cbd5e1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
+  gap: 8px;
+}
+
+.map-placeholder-icon {
+  font-size: 32px;
+  animation: bounce 2s infinite;
+}
+
+/* --- CTA Side Box ------------------------------------------- */
+.cta-box-card {
+  background: #fff;
+  border-radius: 20px;
+  border: 1px solid #f1f5f9;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+  padding: 28px;
+}
+
+.cta-builder-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.cta-builder-logo {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  background: #eff6ff;
+  border: 1.5px solid #bfdbfe;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: #2563eb;
+  font-weight: 700;
+}
+
+.cta-builder-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1a3c5e;
+}
+
+.cta-builder-title {
+  font-size: 12px;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+.cta-button-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.whatsapp-cta-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: #25D366 !important;
+  color: white !important;
+  border: none;
+  font-size: 15px;
+  font-weight: 700;
+  border-radius: 12px;
+  padding: 14px 0;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 4px 12px rgba(37, 211, 102, 0.2);
+}
+
+.whatsapp-cta-btn:hover {
+  background: #20ba5a !important;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(37, 211, 102, 0.35);
+}
+
+.callback-cta-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: white;
+  border: none;
+  font-size: 15px;
+  font-weight: 700;
+  border-radius: 12px;
+  padding: 14px 0;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+.callback-cta-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.35);
+}
+
+/* --- Similar Properties ------------------------------------- */
+.similar-properties-section {
+  margin-top: 60px;
+  border-top: 1.5px solid #e2e8f0;
+  padding-top: 60px;
+}
+
+.similar-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 28px;
+  font-weight: 800;
+  color: #1a3c5e;
+  margin-bottom: 32px;
+}
+
+.similar-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+/* --- Page States (Loading / Error) ------------------------- */
+.details-not-found {
+  min-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px 24px;
+}
+
+.details-not-found h2 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 32px;
+  color: #1a3c5e;
+  margin-bottom: 12px;
+}
+
+.details-not-found p {
+  color: #64748b;
+  max-width: 400px;
+  margin-bottom: 24px;
+}
+
+/* --- Skeletons ---------------------------------------------- */
+.skeleton-pulse {
+  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+  background-size: 200% 100%;
+  animation: loading-pulse 1.5s infinite;
+}
+
+@keyframes loading-pulse {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* ============================================================
+   RESPONSIVE DESIGN
+   ============================================================ */
+
+@media (max-width: 1024px) {
+  .details-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .details-side-col {
+    position: static;
+  }
+
+  .gallery-layout {
+    height: 400px;
+  }
+
+  .similar-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .property-details-page {
+    padding: 80px 16px 120px; /* Space for sticky mobile CTA banner */
+  }
+
+  .gallery-layout {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+
+  .gallery-thumbs-col {
+    order: 2;
+    flex-direction: row;
+    overflow-x: auto;
+    overflow-y: hidden;
+    height: 70px;
+    margin-top: 10px;
+  }
+
+  .gallery-thumb-btn {
+    width: 70px;
+    height: 60px;
+  }
+
+  .gallery-main-viewport {
+    height: 300px;
+  }
+
+  .details-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .details-price-section {
+    text-align: left;
+  }
+
+  /* Mobile Sticky Bottom CTA Banner */
+  .details-side-col {
+    display: contents; /* unwrap side elements */
+  }
+
+  .cta-box-card {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    border-radius: 20px 20px 0 0;
+    box-shadow: 0 -10px 30px rgba(0,0,0,0.1);
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    background: #fff;
+    border-top: 1px solid #e2e8f0;
+  }
+
+  .cta-builder-info {
+    display: none; /* Hide builder card in sticky bar */
+  }
+
+  .cta-button-stack {
+    flex-direction: row;
+    width: 100%;
+  }
+
+  .whatsapp-cta-btn, .callback-cta-btn {
+    flex: 1;
+    padding: 12px 0;
+    font-size: 14px;
+  }
+
+  .similar-grid {
+    grid-template-columns: 1fr;
+  }
+}

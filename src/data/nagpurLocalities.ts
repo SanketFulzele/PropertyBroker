@@ -14,6 +14,21 @@ export const NAGPUR_LOCALITY_NAMES = [
   "Sadar",
   "Ramdaspeth",
   "Shankar Nagar",
+  "Sonegaon",
+  "Nandanvan",
+  "Khaparkheda",
+  "Mohagaon",
+  "Ambazari",
+  "Lakadganj",
+  "Ganeshpeth",
+  "Itwari",
+  "Sitabuldi",
+  "Mahal",
+  "Sakkardara",
+  "Ayodhya Nagar",
+  "Wathoda",
+  "Kalamna",
+  "Kotambi",
 ] as const;
 
 export type NagpurLocality = (typeof NAGPUR_LOCALITY_NAMES)[number];

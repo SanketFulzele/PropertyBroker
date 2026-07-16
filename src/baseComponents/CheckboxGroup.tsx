@@ -25,7 +25,7 @@ const CheckboxGroup = ({
   };
 
   return (
-    <div style={{ marginBottom: 24 }}>
+    <div style={{ marginBottom: 0 }}>
       <h4
         style={{
           fontFamily: "'DM Sans', sans-serif",
