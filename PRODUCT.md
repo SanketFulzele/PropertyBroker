@@ -98,6 +98,53 @@ Renders a grid of 3 similar property cards at the bottom of the page, scoring ca
 
 ---
 
+### Analytics & Event Tracking System
+
+**Goal:** Centralize all analytics tracking into a single utility layer, making it easy to swap providers (Meta Pixel, GA4, GTM) without touching component code.
+
+#### Architecture
+
+| File | Purpose |
+|---|---|
+| `src/types/analytics.ts` | TypeScript interfaces for all event parameters |
+| `src/utils/analytics.ts` | Centralized tracking functions (Meta Pixel + future GA4/GTM) |
+| `src/utils/contact.ts` | WhatsApp/Phone helpers that track + execute actions |
+
+#### Tracked Events
+
+| Event | Function | Where Fired |
+|---|---|---|
+| **PageView** | `trackPageView()` | `MetaPixel.tsx` — every route change |
+| **Search** | `trackSearch()` | `FilterPage.tsx` — on mount + debounced filter changes (800ms) |
+| **ViewContent** | `trackViewContent()` | `PropertyDetailsPage.tsx` — once on property load |
+| **Contact** | `trackContact()` | `contact.ts` — called by `openWhatsApp()` and `makePhoneCall()` |
+| **Lead** | `trackLead()` | `contact.ts` — called by `openWhatsApp()` and `makePhoneCall()` |
+
+#### Contact Utility
+
+All WhatsApp and phone interactions flow through `src/utils/contact.ts`:
+- `openWhatsApp({...})` — opens WhatsApp with tracking, supports property-specific messages
+- `makePhoneCall({...})` — initiates call with tracking
+- `getWhatsAppUrl()` / `getPhoneUrl()` — URL generators without side effects
+- Phone number centralized: `919921215145` (+91 99212 15145)
+
+#### Integration Points
+
+| Component | Action Tracked |
+|---|---|
+| `WhatsAppFloat.tsx` | WhatsApp via `openWhatsApp({ source: "whatsapp_float" })` |
+| `Navbar.tsx` | Phone via `makePhoneCall({ source: "navbar" })` |
+| `PropertyCard.tsx` | WhatsApp via `openWhatsApp({ source: "property_card", ... })` |
+| `PropertyDetailsPage.tsx` | WhatsApp + Phone via contact utils, ViewContent on load |
+| `FilterPage.tsx` | Search on mount + debounced filter changes |
+| `MetaPixel.tsx` | PageView on every route change via `trackPageView()` |
+
+#### Future Provider Support
+
+To add GA4 or GTM, add tracking calls inside `src/utils/analytics.ts` — each function already supports multiple providers via the `getFbq()` pattern. Add `window.gtag` calls alongside `fbq` calls. Component code stays untouched.
+
+---
+
 ### Reusable Components Created/Modified
 * **[PropertyDetailsPage.tsx](file:///d:/Sanket/GitSanket/PropertyBroker/src/pages/PropertyDetailsPage.tsx)**: Main composition page.
 * **[PropertyCard.tsx](file:///d:/Sanket/GitSanket/PropertyBroker/src/components/PropertyCard.tsx)**: Refactored with anchor wraps, separate z-index buttons, and whatsapp builders.

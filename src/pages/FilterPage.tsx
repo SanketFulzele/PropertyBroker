@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { FILTER_PROPERTIES } from "../data/filterProperties";
 import PropertyCard from "../components/PropertyCard";
@@ -6,14 +6,53 @@ import FilterSidebar from "../components/FilterSidebar";
 import { EmptyState } from "../baseComponents";
 import { usePropertyFilters } from "../utils/usePropertyFilters";
 import { useLocalityFilter } from "../hooks/useUrlFilters";
+import { trackSearch } from "../utils/analytics";
 import "../styles/filterPage.css";
 
 export default function FilterPage() {
   const { locality: urlLocality, setLocality: setUrlLocality, clearLocality } = useLocalityFilter();
   const { filters, setFilter, clearAll, filtered, hasActiveFilters, total, shown } = usePropertyFilters(FILTER_PROPERTIES, urlLocality);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const isFirstRender = useRef(true);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const activeLocality = filters.locality.length === 1 ? filters.locality[0] : null;
+
+  const trackCurrentSearch = useCallback(() => {
+    trackSearch({
+      locality: filters.locality.length > 0 ? filters.locality : undefined,
+      propertyType: filters.propertyType[0],
+      bhk: filters.bhk[0],
+      budgetMin: filters.budgetMin,
+      budgetMax: filters.budgetMax,
+      areaMin: filters.areaMin,
+      areaMax: filters.areaMax,
+      furnished: filters.furnished[0],
+      resultsCount: shown,
+    });
+  }, [filters, shown]);
+
+  // Track initial page view with filters
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      trackCurrentSearch();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Track filter changes (debounced)
+  useEffect(() => {
+    if (isFirstRender.current) return;
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      trackCurrentSearch();
+    }, 800);
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filters, shown]);
 
   return (
     <div className="filter-page">

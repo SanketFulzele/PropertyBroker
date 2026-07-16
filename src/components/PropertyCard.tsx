@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { Property } from "../types/types";
 import { Badge, Button } from "../baseComponents";
+import { openWhatsApp } from "../utils/contact";
 
 export default function PropertyCard({
   prop,
@@ -236,13 +237,20 @@ export default function PropertyCard({
         </div>
 
         <div style={{ display: "flex", gap: 10, position: "relative", zIndex: 2 }}>
-          <a
-            href={`https://wa.me/919921215145?text=${encodeURIComponent(
-              `Hello,\n\nI am interested in getting contact details for the builder of:\n\nProperty: ${prop.title}\nLocation: ${prop.locality}, ${prop.city}\nPrice: ${prop.price}\n\nCan you please assist?\n\nLink: ${window.location.origin}/property/${prop.slug}`
-            )}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ flex: 1, textDecoration: "none" }}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              openWhatsApp({
+                source: "property_card",
+                propertyName: prop.title,
+                propertyLocation: `${prop.locality}, ${prop.city}`,
+                propertyPrice: prop.price,
+                propertySlug: prop.slug,
+                propertyId: prop.id.toString(),
+              });
+            }}
+            style={{ flex: 1, border: "none", background: "none", padding: 0, cursor: "pointer" }}
           >
             <Button
               variant="outline"
@@ -251,7 +259,7 @@ export default function PropertyCard({
             >
               Contact Builder
             </Button>
-          </a>
+          </button>
           <a
             href={`/property/${prop.slug}`}
             target="_blank"

@@ -2,6 +2,8 @@ import { Link } from "react-router-dom";
 import { Logo } from "../baseComponents";
 import "../styles/footer.css";
 
+const DEVELOPED_ROUTES = ["/", "/filter", "/privacy-policy"];
+
 export default function Footer() {
   const year = new Date().getFullYear();
 
@@ -35,6 +37,12 @@ export default function Footer() {
     },
   ];
 
+  const isRouteDeveloped = (path: string) => {
+    if (DEVELOPED_ROUTES.includes(path)) return true;
+    if (path.startsWith("/property/")) return true;
+    return false;
+  };
+
   return (
     <footer className="footer">
       <div className="footer-container">
@@ -55,9 +63,15 @@ export default function Footer() {
 
               {col.links.map((link) => (
                 <div key={link.label} className="footer-link-item">
-                  <Link to={link.path} className="footer-link">
-                    {link.label}
-                  </Link>
+                  {isRouteDeveloped(link.path) ? (
+                    <Link to={link.path} className="footer-link">
+                      {link.label}
+                    </Link>
+                  ) : (
+                    <span className="footer-link" style={{ pointerEvents: "none" }}>
+                      {link.label}
+                    </span>
+                  )}
                 </div>
               ))}
             </div>

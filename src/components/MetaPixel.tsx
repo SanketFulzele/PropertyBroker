@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import { trackPageView } from "../utils/analytics";
 
 type FbqFunction = ((...args: unknown[]) => void) & {
   callMethod?: (...args: unknown[]) => void;
@@ -73,9 +74,7 @@ export default function MetaPixel() {
       initialized = true;
     }
 
-    if (window.fbq) {
-      window.fbq("track", "PageView");
-    }
+    trackPageView({ page: location.pathname, title: document.title });
   }, [location.pathname]);
 
   return null;

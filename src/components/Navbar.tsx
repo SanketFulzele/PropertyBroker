@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { Phone, Menu, X } from "lucide-react";
 import "../styles/navbar.css";
 import { Logo } from "../baseComponents";
+import { makePhoneCall } from "../utils/contact";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -57,10 +58,14 @@ export default function Navbar() {
         </div>
 
         <div className="navbar-right">
-          <a href="tel:9921215145" className="navbar-phone">
+          <button
+            className="navbar-phone"
+            onClick={() => makePhoneCall({ source: "navbar" })}
+            style={{ background: "none", border: "none", cursor: "pointer" }}
+          >
             <Phone size={18} />
             <span>99-2121-5145</span>
-          </a>
+          </button>
 
           <button
             className="navbar-menu-toggle"

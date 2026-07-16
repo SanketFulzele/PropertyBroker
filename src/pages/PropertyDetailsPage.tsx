@@ -19,6 +19,8 @@ import {
 import { PROPERTIES } from "../data/data";
 import { FILTER_PROPERTIES } from "../data/filterProperties";
 import { parsePrice } from "../utils/parsePrice";
+import { trackViewContent } from "../utils/analytics";
+import { openWhatsApp, makePhoneCall } from "../utils/contact";
 import PropertyCard from "../components/PropertyCard";
 import { Badge, Button } from "../baseComponents";
 import "../styles/propertyDetails.css";
@@ -59,6 +61,20 @@ export default function PropertyDetailsPage() {
       setLoading(false);
     }
   }, [property]);
+
+  // Track ViewContent on property load
+  useEffect(() => {
+    if (property) {
+      trackViewContent({
+        id: property.id.toString(),
+        name: property.title,
+        category: property.propertyType,
+        price: property.price,
+        locality: property.locality,
+        bhk: property.bhk,
+      });
+    }
+  }, [property?.id]);
 
   // Client-Side SEO Metadata Injection
   useEffect(() => {
@@ -150,13 +166,6 @@ export default function PropertyDetailsPage() {
       .sort((a, b) => b.score - a.score)
       .map((x) => x.prop)
       .slice(0, 3);
-  }, [property]);
-
-  // Primary CTA WhatsApp Query Generator
-  const whatsappUrl = useMemo(() => {
-    if (!property) return "";
-    const text = `Hello,\n\nI am interested in this property:\n\n*Property:* ${property.title}\n*Location:* ${property.locality}, ${property.city}\n*Price:* ${property.price}\n\n*Property Link:* ${window.location.href}\n\nCan you please share more details?`;
-    return `https://wa.me/919921215145?text=${encodeURIComponent(text)}`;
   }, [property]);
 
   // Loading Skeleton State
@@ -449,7 +458,17 @@ export default function PropertyDetailsPage() {
               </div>
 
               <div className="cta-button-stack">
-                <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none" }}>
+                <button
+                  onClick={() => openWhatsApp({
+                    source: "property_details",
+                    propertyName: property.title,
+                    propertyLocation: `${property.locality}, ${property.city}`,
+                    propertyPrice: property.price,
+                    propertySlug: property.slug,
+                    propertyId: property.id.toString(),
+                  })}
+                  style={{ textDecoration: "none", background: "none", border: "none", padding: 0, width: "100%", cursor: "pointer" }}
+                >
                   <button className="whatsapp-cta-btn">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -462,13 +481,20 @@ export default function PropertyDetailsPage() {
                     </svg>
                     <span>Connect on WhatsApp</span>
                   </button>
-                </a>
+                </button>
                 
-                <a href={`tel:+919921215145`} style={{ textDecoration: "none" }}>
+                <button
+                  onClick={() => makePhoneCall({
+                    source: "property_details",
+                    propertyId: property.id.toString(),
+                    propertyName: property.title,
+                  })}
+                  style={{ textDecoration: "none", background: "none", border: "none", padding: 0, width: "100%", cursor: "pointer" }}
+                >
                   <button className="callback-cta-btn">
                     <span>Call Company Advisor</span>
                   </button>
-                </a>
+                </button>
               </div>
 
             </div>

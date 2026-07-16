@@ -1,19 +1,18 @@
 import { useState } from "react";
+import { openWhatsApp } from "../utils/contact";
 
 export default function WhatsAppFloat() {
   const [hovered, setHovered] = useState(false);
 
-  const phoneNumber = "919921215145";
-
-const message = encodeURIComponent(
-  "Hello, I am interested in exploring your property listings. Kindly share more details.\n\nRegards,\n\nhttps://property-broker-ngp.vercel.app/"
-);
-
-  const whatsappLink = `https://wa.me/${phoneNumber}?text=${message}`;
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    openWhatsApp({ source: "whatsapp_float" });
+  };
 
   return (
     <a
-      href={whatsappLink}
+      href="#"
+      onClick={handleClick}
       target="_blank"
       rel="noopener noreferrer"
       style={{
