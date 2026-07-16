@@ -43,6 +43,12 @@ export interface Stat {
   label: string;
 }
 
+export interface InvestmentFeature {
+  icon: React.FC<{ size?: number; strokeWidth?: number; color?: string }>;
+  title: string;
+  desc: string;
+}
+
 export interface Locality {
   id: number;
   name: string;

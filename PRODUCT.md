@@ -98,6 +98,46 @@ Renders a grid of 3 similar property cards at the bottom of the page, scoring ca
 
 ---
 
+### "Why Invest in Nagpur?" Section
+
+* **Goal:** Educate users about Nagpur's investment potential, build trust, and drive traffic to the property filter page.
+* **Placement:** Renders between `StatsSection` and `PropertyCarousel` on the Home page.
+
+#### 1. Component Architecture
+* **Component:** `src/components/HomeInvestmentSection.tsx`
+* **Type Interface:** `InvestmentFeature` added to `src/types/types.ts` (`icon`, `title`, `desc`).
+* **Data-Driven:** All five features defined in a `FEATURES` array at the top of the file — new investment points can be added by appending to this array with zero layout changes.
+
+#### 2. Features Displayed
+| Icon (lucide-react) | Title | Description |
+|---|---|---|
+| `Train` | Metro Connectivity | Public transport and road connectivity improvements |
+| `Building2` | MIHAN Growth Corridor | Industrial/IT hub driving employment and demand |
+| `IndianRupee` | Affordable Property Prices | Quality homes at prices below major metros |
+| `TrendingUp` | High Rental Demand | Rental opportunities from professionals, students, families |
+| `Landmark` | Future Infrastructure | Highways, commercial projects, smart city initiatives |
+
+#### 3. Design
+* Dark premium gradient background (`#0f172a → #1e3a5f → #0f172a`) matching the existing WhyUsSection.
+* Subtle dot-grid pattern overlay for texture.
+* Glassmorphism feature cards (`rgba(255,255,255,0.06)` + `backdrop-filter: blur(12px)`).
+* Rounded icon containers with soft blue accents (`#60a5fa`).
+* Entrance animations via `useIntersectionObserver` with staggered delays.
+* Hover: card background shifts to blue tint, lifts up 4px.
+
+#### 4. Responsive Behavior
+* **Desktop (>1024px):** 5-column grid.
+* **Tablet (≤1024px):** 2-column grid; 5th card spans full width centered.
+* **Mobile (≤640px):** Single column stack.
+* Breakpoints handled via embedded `<style>` tag with `!important` overrides (consistent with project patterns).
+
+#### 5. CTA Button
+* Text: "Explore Investment Areas"
+* Navigates to `/filter` via React Router `useNavigate`.
+* Styled as outline button with blue accent, hover fills with blue tint and lifts.
+
+---
+
 ### Analytics & Event Tracking System
 
 **Goal:** Centralize all analytics tracking into a single utility layer, making it easy to swap providers (Meta Pixel, GA4, GTM) without touching component code.
@@ -146,6 +186,7 @@ To add GA4 or GTM, add tracking calls inside `src/utils/analytics.ts` — each f
 ---
 
 ### Reusable Components Created/Modified
+* **[HomeInvestmentSection.tsx](file:///d:/Sanket/GitSanket/PropertyBroker/src/components/HomeInvestmentSection.tsx)**: "Why Invest in Nagpur?" section — data-driven, responsive, dark premium theme.
 * **[PropertyDetailsPage.tsx](file:///d:/Sanket/GitSanket/PropertyBroker/src/pages/PropertyDetailsPage.tsx)**: Main composition page.
 * **[PropertyCard.tsx](file:///d:/Sanket/GitSanket/PropertyBroker/src/components/PropertyCard.tsx)**: Refactored with anchor wraps, separate z-index buttons, and whatsapp builders.
 * **[propertyEnricher.ts](file:///d:/Sanket/GitSanket/PropertyBroker/src/utils/propertyEnricher.ts)**: Shared database mapper.
