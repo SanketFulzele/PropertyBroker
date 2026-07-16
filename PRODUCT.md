@@ -2,6 +2,54 @@
 
 ## Changelog
 
+### SPA Routing Configuration — React Router Refresh Fix
+
+**Problem:** When users refresh or directly navigate to client-side routes (`/filter`, `/filter?locality=...`, `/property/:slug`), the hosting server returns a 404 error because it tries to find a physical file matching the path instead of serving `index.html`.
+
+**Solution:** Configured SPA rewrite rules for both Vercel and Netlify hosting platforms to serve `index.html` for all non-static routes.
+
+#### New Files
+
+| File | Purpose |
+|---|---|
+| `vercel.json` | Vercel hosting SPA rewrite configuration |
+| `public/_redirects` | Netlify hosting SPA redirect rules |
+
+#### How It Works
+
+- **Vercel (`vercel.json`):** Uses regex-based rewrite rules to route all non-static requests to `index.html`. Excludes assets, favicon, icons, robots.txt, sitemap.xml, manifest.json, and file extensions.
+- **Netlify (`_redirects`):** Uses a catch-all redirect rule `/* → /index.html` with status `200` (rewrite, not redirect).
+- **React Router:** Uses `BrowserRouter` which handles client-side routing. The server configuration ensures `index.html` is always served, allowing React Router to take over.
+
+#### Supported Routes
+
+All routes now work correctly when:
+- Opening in a new tab
+- Refreshing the page
+- Copy-pasting the URL into a new browser
+- Using browser Back/Forward buttons
+
+Routes:
+- `/` — Home page
+- `/filter` — Filter page
+- `/filter?locality=Manish%20Nagar` — Filter with query parameters
+- `/property/:slug` — Property details page
+- `/privacy-policy` — Privacy policy page
+
+#### Static Assets Not Affected
+
+Rewrites do NOT interfere with:
+- Images (`.png`, `.jpg`, `.svg`, `.gif`, `.webp`)
+- Icons (`.ico`)
+- CSS files (`.css`)
+- JavaScript bundles (`.js`)
+- Manifest (`manifest.json`)
+- Robots.txt (`robots.txt`)
+- Sitemap (`sitemap.xml`)
+- Fonts (`.woff`, `.woff2`, `.ttf`, `.otf`)
+
+---
+
 ### Scroll Position Fix — Route-Based Scroll Restoration
 * **Problem:** Navigating to the Filter page (from Popular Localities cards, Hero Search, or any route transition) opened at the previous scroll position instead of the top of the page.
 * **Solution:** Added a centralized, reusable `ScrollToTop` component that automatically scrolls to the top of the window on every route change.
