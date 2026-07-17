@@ -494,7 +494,7 @@ If authentication is added later, it will need to be introduced from scratch.
 | Event | Function | Where Fired |
 |-------|----------|-------------|
 | **PageView** | `trackPageView()` | `MetaPixel.tsx` — every route change |
-| **Search** | `trackSearch()` | `FilterPage.tsx` — mount + debounced filter changes (800ms) |
+| **Search** | `trackSearch()` | `FilterPage.tsx` — immediate on mount, then debounced on filter changes (800ms) |
 | **ViewContent** | `trackViewContent()` | `PropertyDetailsPage.tsx` — on property load |
 | **Contact** | `trackContact()` | `contact.ts` — called by `openWhatsApp()` and `makePhoneCall()` |
 | **Lead** | `trackLead()` | `contact.ts` — called by `openWhatsApp()` and `makePhoneCall()` |

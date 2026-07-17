@@ -32,18 +32,13 @@ export default function FilterPage() {
     });
   }, [filters, shown]);
 
-  // Track initial page view with filters
+  // Track search on mount (immediate) and filter changes (debounced)
   useEffect(() => {
     if (isFirstRender.current) {
       isFirstRender.current = false;
       trackCurrentSearch();
+      return;
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // Track filter changes (debounced)
-  useEffect(() => {
-    if (isFirstRender.current) return;
     if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => {
       trackCurrentSearch();
