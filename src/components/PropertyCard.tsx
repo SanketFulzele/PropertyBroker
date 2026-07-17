@@ -28,7 +28,6 @@ export default function PropertyCard({
         boxShadow: hovered
           ? "0 20px 60px rgba(37,99,235,0.18), 0 2px 12px rgba(0,0,0,0.06)"
           : "0 4px 24px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04)",
-        transform: hovered ? "translateY(-8px)" : "translateY(0)",
         transition: "all 0.4s cubic-bezier(0.25,0.46,0.45,0.94)",
         opacity: visible ? 1 : 0,
         transitionDelay: `${delay}s`,
