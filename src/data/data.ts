@@ -7,7 +7,7 @@ const RAW_PROPERTIES = [
     title: "Vrindavan Heights",
     location: "Manish Nagar, Nagpur",
     locality: "Manish Nagar",
-    price: "₹62 L",
+    price: "₹60 L",
     pricePerSqft: "₹5,800/sqft",
     type: "Apartment",
     bhk: "2 BHK",

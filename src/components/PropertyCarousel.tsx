@@ -1,23 +1,74 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { MouseEvent } from "react";
 import { PROPERTIES } from "../data/data";
 import PropertyCard from "./PropertyCard";
 import { SectionHeader } from "../baseComponents";
 
+const CARD_W = 380;
+const GAP = 24;
+const CLONE_COUNT = PROPERTIES.length;
+
+const extendedProperties = [
+  ...PROPERTIES.slice(-CLONE_COUNT),
+  ...PROPERTIES,
+  ...PROPERTIES.slice(0, CLONE_COUNT),
+];
+
 export default function PropertyCarousel() {
-  const [activeIdx, setActiveIdx] = useState(0);
+  const [virtualIdx, setVirtualIdx] = useState(CLONE_COUNT);
   const [dragging, setDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [translateX, setTranslateX] = useState(0);
-  const CARD_W = 380;
-  const GAP = 24;
+  const [instantJump, setInstantJump] = useState(false);
+  const resetTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const next = useCallback(
-    () => setActiveIdx((i) => Math.min(i + 1, PROPERTIES.length - 1)),
-    []
-  );
-  const prev = useCallback(
-    () => setActiveIdx((i) => Math.max(i - 1, 0)),
+  const realIdx =
+    ((virtualIdx - CLONE_COUNT) % PROPERTIES.length + PROPERTIES.length) %
+    PROPERTIES.length;
+
+  const offset = -(virtualIdx * (CARD_W + GAP)) + translateX;
+
+  const scheduleReset = useCallback(() => {
+    if (resetTimer.current) clearTimeout(resetTimer.current);
+    resetTimer.current = setTimeout(() => {
+      setVirtualIdx((current) => {
+        const minReal = CLONE_COUNT;
+        const maxReal = CLONE_COUNT + PROPERTIES.length - 1;
+        if (current > maxReal || current < minReal) {
+          const mapped =
+            ((current - CLONE_COUNT) % PROPERTIES.length +
+              PROPERTIES.length) %
+            PROPERTIES.length;
+          return CLONE_COUNT + mapped;
+        }
+        return current;
+      });
+      setInstantJump(true);
+      setTimeout(() => setInstantJump(false), 50);
+    }, 500);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (resetTimer.current) clearTimeout(resetTimer.current);
+    };
+  }, []);
+
+  const next = useCallback(() => {
+    setVirtualIdx((i) => i + 1);
+    scheduleReset();
+  }, [scheduleReset]);
+
+  const prev = useCallback(() => {
+    setVirtualIdx((i) => i - 1);
+    scheduleReset();
+  }, [scheduleReset]);
+
+  const goToSlide = useCallback(
+    (idx: number) => {
+      if (resetTimer.current) clearTimeout(resetTimer.current);
+      setVirtualIdx(CLONE_COUNT + idx);
+    },
     []
   );
 
@@ -40,8 +91,6 @@ export default function PropertyCarousel() {
     setTranslateX(0);
   };
 
-  const offset = -(activeIdx * (CARD_W + GAP)) + translateX;
-
   return (
     <section
       id="buy"
@@ -49,9 +98,7 @@ export default function PropertyCarousel() {
       style={{ background: "#f8fafc" }}
     >
       <div className="property-carousel-container">
-        <div
-          className="property-carousel-header"
-        >
+        <div className="property-carousel-header">
           <SectionHeader
             badge="Featured Properties"
             heading="Handpicked Homes"
@@ -79,14 +126,7 @@ export default function PropertyCarousel() {
                   alignItems: "center",
                   justifyContent: "center",
                   transition: "all 0.2s",
-                  opacity:
-                    i === 0
-                      ? activeIdx === 0
-                        ? 0.35
-                        : 1
-                      : activeIdx === PROPERTIES.length - 1
-                      ? 0.35
-                      : 1,
+                  opacity: 1,
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.background = "#2563eb";
@@ -97,7 +137,7 @@ export default function PropertyCarousel() {
                   e.currentTarget.style.color = "#000";
                 }}
               >
-                {i === 0 ? "←" : "→"}
+                {i === 0 ? "\u2190" : "\u2192"}
               </button>
             ))}
           </div>
@@ -105,9 +145,7 @@ export default function PropertyCarousel() {
 
         <div
           className="property-carousel-track-wrapper"
-          style={{
-            cursor: dragging ? "grabbing" : "grab",
-          }}
+          style={{ cursor: dragging ? "grabbing" : "grab" }}
           onMouseDown={handleMouseDown}
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
@@ -118,17 +156,18 @@ export default function PropertyCarousel() {
               display: "flex",
               gap: GAP,
               transform: `translateX(${offset}px)`,
-              transition: dragging
-                ? "none"
-                : "transform 0.5s cubic-bezier(0.25,0.46,0.45,0.94)",
+              transition:
+                dragging || instantJump
+                  ? "none"
+                  : "transform 0.5s cubic-bezier(0.25,0.46,0.45,0.94)",
               userSelect: "none",
             }}
           >
-            {PROPERTIES.map((prop, i) => (
+            {extendedProperties.map((prop, i) => (
               <PropertyCard
-                key={prop.id}
+                key={`${prop.id}-${i}`}
                 prop={prop}
-                delay={i * 0.05}
+                delay={0}
                 visible={true}
                 width={CARD_W}
               />
@@ -147,13 +186,13 @@ export default function PropertyCarousel() {
           {PROPERTIES.map((_, i) => (
             <button
               key={i}
-              onClick={() => setActiveIdx(i)}
+              onClick={() => goToSlide(i)}
               style={{
-                width: i === activeIdx ? 28 : 8,
+                width: i === realIdx ? 28 : 8,
                 height: 8,
                 borderRadius: 4,
                 border: "none",
-                background: i === activeIdx ? "#2563eb" : "#cbd5e1",
+                background: i === realIdx ? "#2563eb" : "#cbd5e1",
                 cursor: "pointer",
                 transition: "all 0.3s cubic-bezier(0.4,0,0.2,1)",
                 padding: 0,
