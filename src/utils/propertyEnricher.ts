@@ -57,8 +57,7 @@ export function enrichProperty(raw: any): Property {
     shuffledPool[j] = temp;
   }
   
-  const additionalImages = shuffledPool.filter(img => img !== primaryImage).slice(0, 5);
-  const images = [primaryImage, ...additionalImages];
+  const images = raw.images || [primaryImage, ...shuffledPool.filter(img => img !== primaryImage).slice(0, 5)];
 
   // Coordinates centered around Nagpur with slight offsets based on id
   const latOffset = ((id % 100) - 50) * 0.001;
