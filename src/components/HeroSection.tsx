@@ -9,13 +9,12 @@ export default function HeroSection() {
 
   return (
     <section
+      className="hero-section"
       style={{
-        minHeight: "100vh",
         position: "relative",
         display: "flex",
-        alignItems: "flex-start", // changed from center
+        alignItems: "flex-start",
         justifyContent: "center",
-        paddingTop: "120px", // pushes content below navbar
         overflow: "hidden",
       }}
     >
@@ -183,14 +182,14 @@ export default function HeroSection() {
 
           {/* Search Row */}
           <div
+            className="hero-search-row"
             style={{
-              display: "flex",
               gap: 0,
-              padding: "20px 20px",
               alignItems: "center",
             }}
           >
             <select
+              className="hero-search-select"
               value={searchLocality}
               onChange={(e) => setSearchLocality(e.target.value)}
               style={{
@@ -202,7 +201,6 @@ export default function HeroSection() {
                 color: "#1e293b",
                 background: "#fff",
                 cursor: "pointer",
-                minWidth: 140,
                 outline: "none",
               }}
             >
@@ -212,6 +210,7 @@ export default function HeroSection() {
             </select>
 
             <input
+              className="hero-search-input"
               placeholder="Search locality, project, or builder…"
               style={{
                 flex: 1,
@@ -227,6 +226,7 @@ export default function HeroSection() {
             />
 
             <button
+              className="hero-search-btn"
               onClick={() => navigate(`/filter?locality=${encodeURIComponent(searchLocality)}`)}
               style={{
                 padding: "14px 28px",

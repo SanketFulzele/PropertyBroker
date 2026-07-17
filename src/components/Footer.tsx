@@ -85,7 +85,9 @@ export default function Footer() {
           </p>
 
           <p className="footer-made">
-            Made for Nagpur
+            Made for Nagpur with ❤️ by 
+            <a href="https://sanket-fulzele-portfolio.vercel.app/" target="_blank" rel="noopener noreferrer"> 
+            {" "}Sanket Fulzele</a>
           </p>
         </div>
       </div>

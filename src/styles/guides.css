@@ -366,6 +366,7 @@
   text-decoration: none;
   display: flex;
   flex-direction: column;
+  cursor: pointer;
 }
 
 .guides-card:hover {
@@ -866,9 +867,13 @@
 }
 
 .guides-detail-body {
-  max-width: 800px;
+  max-width: 1100px;
   margin: 0 auto;
   padding: 48px 24px 80px;
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 48px;
+  align-items: start;
 }
 
 .guides-detail-toc {
@@ -876,7 +881,8 @@
   border: 1px solid #f1f5f9;
   border-radius: 16px;
   padding: 24px;
-  margin-bottom: 40px;
+  position: sticky;
+  top: 100px;
 }
 
 .guides-detail-toc-title {
@@ -1073,6 +1079,7 @@
   margin: 0 0 32px;
 }
 
+/* --- Back Button ------------------------------------------- */
 .guides-detail-back {
   display: inline-flex;
   align-items: center;
@@ -1084,13 +1091,53 @@
   text-decoration: none;
   margin-bottom: 24px;
   transition: gap 0.2s;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
 }
 
 .guides-detail-back:hover {
   gap: 12px;
 }
 
-/* --- Responsive --- */
+/* --- TOC Toggle (Mobile) ---------------------------------- */
+.guides-toc-toggle {
+  display: none;
+  width: 100%;
+  padding: 14px 20px;
+  background: #f8fafc;
+  border: 1px solid #f1f5f9;
+  border-radius: 12px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a3c5e;
+  cursor: pointer;
+  text-align: left;
+  margin-bottom: 16px;
+  transition: all 0.2s;
+}
+
+.guides-toc-toggle:hover {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+}
+
+.guides-toc-toggle-icon {
+  margin-left: 8px;
+  transition: transform 0.3s;
+}
+
+.guides-toc-toggle-icon-open {
+  transform: rotate(180deg);
+}
+
+/* ============================================================
+   RESPONSIVE DESIGN
+   ============================================================ */
+
+/* --- 1024px (tablet landscape) ----------------------------- */
 @media (max-width: 1024px) {
   .guides-categories-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -1107,50 +1154,596 @@
   .guides-featured-image {
     min-height: 260px;
   }
+  .guides-detail-body {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  .guides-detail-toc {
+    position: static;
+  }
 }
 
-@media (max-width: 640px) {
+/* --- 768px (tablet portrait) ------------------------------- */
+@media (max-width: 768px) {
   .guides-hero {
-    padding: 100px 16px 60px;
+    padding: 100px 20px 60px;
     min-height: auto;
   }
+
   .guides-section,
   .guides-section-dark,
   .guides-section-light {
-    padding: 60px 16px;
+    padding: 60px 20px;
   }
-  .guides-categories-grid {
-    grid-template-columns: 1fr;
-  }
-  .guides-grid {
-    grid-template-columns: 1fr;
-  }
-  .guides-resources-grid {
-    grid-template-columns: 1fr;
-  }
-  .guides-search {
-    flex-direction: column;
-  }
-  .guides-search-btn {
-    width: calc(100% - 12px);
-    margin: 6px;
-  }
-  .guides-newsletter-form {
-    flex-direction: column;
-  }
-  .guides-newsletter {
-    padding: 40px 20px;
-  }
-  .guides-cta {
-    padding: 48px 20px;
-  }
+
   .guides-featured-body {
     padding: 28px;
   }
-  .guides-detail-hero {
-    height: 320px;
+
+  .guides-featured-title {
+    font-size: 22px;
   }
+
+  .guides-category-card {
+    padding: 24px 20px;
+  }
+
+  .guides-card-body {
+    padding: 20px;
+  }
+
+  .guides-card-image-wrapper {
+    height: 180px;
+  }
+
+  .guides-newsletter {
+    padding: 40px 24px;
+  }
+
+  .guides-cta {
+    padding: 48px 24px;
+  }
+
+  .guides-detail-hero {
+    height: 340px;
+  }
+
   .guides-detail-hero-content {
-    padding: 24px 16px 32px;
+    padding: 24px 20px 32px;
+  }
+
+  .guides-detail-hero-title {
+    font-size: clamp(24px, 4vw, 36px);
+  }
+
+  .guides-detail-body {
+    padding: 32px 20px 60px;
+  }
+
+  .guides-detail-section-title {
+    font-size: 22px;
+  }
+
+  .guides-detail-related {
+    padding: 48px 20px;
+  }
+
+  .guides-detail-related-title {
+    font-size: 24px;
+    margin-bottom: 24px;
+  }
+
+  .guides-detail-share {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .guides-toc-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .guides-detail-toc {
+    display: none;
+  }
+
+  .guides-detail-toc-open {
+    display: block;
+  }
+
+  .guides-cta-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .guides-cta-btn-primary,
+  .guides-cta-btn-outline {
+    width: 100%;
+    max-width: 320px;
+    text-align: center;
+    justify-content: center;
+  }
+}
+
+/* --- 640px (large phone) ---------------------------------- */
+@media (max-width: 640px) {
+  .guides-hero {
+    padding: 90px 16px 48px;
+    min-height: auto;
+  }
+
+  .guides-hero-title {
+    font-size: clamp(26px, 6vw, 36px);
+  }
+
+  .guides-hero-subtitle {
+    font-size: 14px;
+    margin-bottom: 28px;
+  }
+
+  .guides-search {
+    max-width: 100%;
+  }
+
+  .guides-search input {
+    font-size: 14px;
+    padding: 14px 0;
+  }
+
+  .guides-search-btn {
+    padding: 10px 20px;
+    font-size: 13px;
+  }
+
+  .guides-section,
+  .guides-section-dark,
+  .guides-section-light {
+    padding: 48px 16px;
+  }
+
+  .guides-section-header {
+    margin-bottom: 32px;
+  }
+
+  .guides-categories-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .guides-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .guides-card-image-wrapper {
+    height: 200px;
+  }
+
+  .guides-resources-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .guides-resource-card {
+    padding: 24px 20px;
+  }
+
+  .guides-newsletter {
+    padding: 36px 16px;
+    border-radius: 20px;
+  }
+
+  .guides-newsletter-title {
+    font-size: clamp(22px, 5vw, 30px);
+  }
+
+  .guides-newsletter-desc {
+    font-size: 14px;
+    margin-bottom: 24px;
+  }
+
+  .guides-newsletter-form {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .guides-newsletter-input {
+    padding: 12px 16px;
+    font-size: 14px;
+  }
+
+  .guides-newsletter-btn {
+    width: 100%;
+    padding: 14px;
+    min-height: 44px;
+  }
+
+  .guides-cta {
+    padding: 40px 16px;
+    border-radius: 20px;
+  }
+
+  .guides-cta-title {
+    font-size: clamp(22px, 5vw, 32px);
+  }
+
+  .guides-cta-desc {
+    font-size: 14px;
+    margin-bottom: 28px;
+  }
+
+  .guides-cta-btn-primary,
+  .guides-cta-btn-outline {
+    width: 100%;
+    min-height: 44px;
+    padding: 14px 24px;
+  }
+
+  .guides-featured {
+    border-radius: 16px;
+  }
+
+  .guides-featured-image {
+    min-height: 200px;
+  }
+
+  .guides-featured-body {
+    padding: 24px 20px;
+  }
+
+  .guides-featured-title {
+    font-size: 20px;
+  }
+
+  .guides-featured-desc {
+    font-size: 14px;
+    margin-bottom: 20px;
+  }
+
+  .guides-featured-btn {
+    padding: 12px 24px;
+    font-size: 13px;
+    min-height: 44px;
+  }
+
+  .guides-category-card {
+    padding: 20px 16px;
+    border-radius: 16px;
+  }
+
+  .guides-category-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+  }
+
+  .guides-category-title {
+    font-size: 16px;
+  }
+
+  .guides-topic-chip {
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+
+  .guides-faq-question {
+    padding: 16px 20px;
+  }
+
+  .guides-faq-question-text {
+    font-size: 14px;
+  }
+
+  .guides-faq-answer {
+    padding: 0 20px 16px;
+    font-size: 13px;
+  }
+
+  .guides-detail-hero {
+    height: 280px;
+  }
+
+  .guides-detail-hero-content {
+    padding: 20px 16px 28px;
+  }
+
+  .guides-detail-hero-title {
+    font-size: clamp(22px, 5vw, 32px);
+  }
+
+  .guides-detail-body {
+    padding: 24px 16px 48px;
+    gap: 24px;
+  }
+
+  .guides-detail-section {
+    margin-bottom: 36px;
+  }
+
+  .guides-detail-section-title {
+    font-size: 20px;
+    margin-bottom: 12px;
+  }
+
+  .guides-detail-section-content {
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  .guides-detail-section-image {
+    border-radius: 12px;
+    margin: 16px 0;
+  }
+
+  .guides-detail-quote {
+    padding: 16px 20px;
+    margin: 16px 0;
+  }
+
+  .guides-detail-quote p {
+    font-size: 14px;
+  }
+
+  .guides-detail-tip,
+  .guides-detail-info {
+    padding: 16px 20px;
+    margin: 16px 0;
+  }
+
+  .guides-detail-tip p,
+  .guides-detail-info p {
+    font-size: 13px;
+  }
+
+  .guides-detail-share {
+    padding: 20px 0;
+    margin-top: 32px;
+    gap: 8px;
+  }
+
+  .guides-detail-share-label {
+    font-size: 13px;
+    width: 100%;
+  }
+
+  .guides-detail-share-btn {
+    width: 44px;
+    height: 44px;
+  }
+
+  .guides-detail-related {
+    padding: 40px 16px;
+  }
+
+  .guides-detail-related-title {
+    font-size: 22px;
+  }
+
+  .guides-detail-back {
+    margin: 0 16px 16px;
+    padding-top: 90px;
+  }
+
+  .guides-card:hover .guides-card-link {
+    gap: 4px;
+  }
+}
+
+/* --- 480px (small phone) ---------------------------------- */
+@media (max-width: 480px) {
+  .guides-hero {
+    padding: 80px 12px 40px;
+  }
+
+  .guides-hero-badge {
+    font-size: 11px;
+    padding: 5px 14px;
+    margin-bottom: 16px;
+  }
+
+  .guides-hero-title {
+    font-size: clamp(24px, 7vw, 32px);
+  }
+
+  .guides-hero-subtitle {
+    font-size: 13px;
+    margin-bottom: 24px;
+  }
+
+  .guides-search {
+    border-radius: 12px;
+  }
+
+  .guides-search-icon {
+    padding: 0 12px;
+  }
+
+  .guides-search input {
+    font-size: 13px;
+    padding: 12px 0;
+  }
+
+  .guides-search-btn {
+    padding: 10px 16px;
+    font-size: 12px;
+    border-radius: 8px;
+    margin: 4px;
+  }
+
+  .guides-section,
+  .guides-section-dark,
+  .guides-section-light {
+    padding: 40px 12px;
+  }
+
+  .guides-section-title,
+  .guides-section-title-light {
+    font-size: clamp(22px, 5vw, 28px);
+  }
+
+  .guides-section-subtitle,
+  .guides-section-subtitle-light {
+    font-size: 14px;
+  }
+
+  .guides-card {
+    border-radius: 16px;
+  }
+
+  .guides-card-image-wrapper {
+    height: 180px;
+  }
+
+  .guides-card-body {
+    padding: 16px;
+  }
+
+  .guides-card-title {
+    font-size: 16px;
+  }
+
+  .guides-card-excerpt {
+    font-size: 12px;
+    margin-bottom: 16px;
+  }
+
+  .guides-card-link {
+    font-size: 12px;
+  }
+
+  .guides-category-card {
+    border-radius: 14px;
+  }
+
+  .guides-category-desc {
+    font-size: 12px;
+  }
+
+  .guides-resource-card {
+    border-radius: 14px;
+    padding: 20px 16px;
+  }
+
+  .guides-resource-icon {
+    width: 42px;
+    height: 42px;
+  }
+
+  .guides-resource-title {
+    font-size: 14px;
+  }
+
+  .guides-resource-desc {
+    font-size: 11px;
+  }
+
+  .guides-resource-btn {
+    padding: 7px 14px;
+    font-size: 11px;
+    min-height: 36px;
+  }
+
+  .guides-newsletter {
+    padding: 32px 12px;
+    border-radius: 16px;
+  }
+
+  .guides-newsletter-title {
+    font-size: clamp(20px, 5vw, 26px);
+  }
+
+  .guides-newsletter-input {
+    padding: 12px 14px;
+    font-size: 13px;
+    border-radius: 10px;
+  }
+
+  .guides-newsletter-btn {
+    padding: 12px;
+    font-size: 13px;
+    border-radius: 10px;
+    min-height: 44px;
+  }
+
+  .guides-cta {
+    padding: 32px 12px;
+    border-radius: 16px;
+  }
+
+  .guides-cta-title {
+    font-size: clamp(20px, 5vw, 28px);
+  }
+
+  .guides-cta-desc {
+    font-size: 13px;
+    margin-bottom: 24px;
+  }
+
+  .guides-cta-btn-primary,
+  .guides-cta-btn-outline {
+    padding: 12px 20px;
+    font-size: 14px;
+    border-radius: 10px;
+  }
+
+  .guides-faq-item {
+    border-radius: 12px;
+  }
+
+  .guides-faq-question {
+    padding: 14px 16px;
+  }
+
+  .guides-faq-question-text {
+    font-size: 13px;
+  }
+
+  .guides-faq-answer {
+    padding: 0 16px 14px;
+    font-size: 12px;
+  }
+
+  .guides-detail-hero {
+    height: 240px;
+  }
+
+  .guides-detail-hero-content {
+    padding: 16px 12px 24px;
+  }
+
+  .guides-detail-hero-title {
+    font-size: clamp(20px, 5vw, 28px);
+  }
+
+  .guides-detail-body {
+    padding: 20px 12px 40px;
+    gap: 20px;
+  }
+
+  .guides-detail-section-title {
+    font-size: 18px;
+  }
+
+  .guides-detail-section-content {
+    font-size: 13px;
+  }
+
+  .guides-detail-related {
+    padding: 32px 12px;
+  }
+
+  .guides-detail-related-title {
+    font-size: 20px;
+  }
+
+  .guides-detail-back {
+    margin: 0 12px 12px;
+  }
+
+  .guides-toc-toggle {
+    padding: 12px 16px;
+    font-size: 13px;
+    border-radius: 10px;
   }
 }

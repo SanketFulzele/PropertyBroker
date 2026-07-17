@@ -45,16 +45,12 @@ export default function PropertyCarousel() {
   return (
     <section
       id="buy"
-      style={{ padding: "100px 0", background: "#f8fafc", overflow: "hidden" }}
+      className="property-carousel-section"
+      style={{ background: "#f8fafc" }}
     >
-      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 40px" }}>
+      <div className="property-carousel-container">
         <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "flex-end",
-            marginBottom: 48,
-          }}
+          className="property-carousel-header"
         >
           <SectionHeader
             badge="Featured Properties"
@@ -108,10 +104,8 @@ export default function PropertyCarousel() {
         </div>
 
         <div
+          className="property-carousel-track-wrapper"
           style={{
-            overflow: "hidden",
-            margin: "0 -40px",
-            padding: "0 40px",
             cursor: dragging ? "grabbing" : "grab",
           }}
           onMouseDown={handleMouseDown}

@@ -173,24 +173,24 @@ export default function PropertyDetailsPage() {
     return (
       <div className="property-details-page">
         <div className="details-wrapper">
-          <div className="skeleton-pulse" style={{ height: 20, width: 200, borderRadius: 4, marginBottom: 24 }} />
-          <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 32 }}>
-            <div>
-              <div className="skeleton-pulse" style={{ height: 40, width: 400, borderRadius: 8, marginBottom: 12 }} />
-              <div className="skeleton-pulse" style={{ height: 20, width: 250, borderRadius: 4 }} />
+          <div className="skeleton-pulse skeleton-breadcrumb" />
+          <div className="skeleton-header-row">
+            <div className="skeleton-header-left">
+              <div className="skeleton-pulse skeleton-title" />
+              <div className="skeleton-pulse skeleton-subtitle" />
             </div>
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end" }}>
-              <div className="skeleton-pulse" style={{ height: 36, width: 150, borderRadius: 8, marginBottom: 8 }} />
-              <div className="skeleton-pulse" style={{ height: 16, width: 100, borderRadius: 4 }} />
+            <div className="skeleton-header-right">
+              <div className="skeleton-pulse skeleton-price" />
+              <div className="skeleton-pulse skeleton-price-sub" />
             </div>
           </div>
           <div className="details-layout">
             <div className="details-main-col">
-              <div className="skeleton-pulse" style={{ height: 480, borderRadius: 20 }} />
-              <div className="skeleton-pulse" style={{ height: 350, borderRadius: 20 }} />
+              <div className="skeleton-pulse skeleton-gallery-main" />
+              <div className="skeleton-pulse skeleton-gallery-desc" />
             </div>
             <div className="details-side-col">
-              <div className="skeleton-pulse" style={{ height: 250, borderRadius: 20 }} />
+              <div className="skeleton-pulse skeleton-cta-card" />
             </div>
           </div>
         </div>
@@ -409,7 +409,7 @@ export default function PropertyDetailsPage() {
             {/* Details Section */}
             <div className="details-card">
               <h2 className="details-card-title">Detailed Specs</h2>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px 32px" }}>
+              <div className="specs-grid">
                 {[
                   { label: "Builder Profile", val: property.builder || "N/A" },
                   { label: "Ownership Profile", val: property.ownership || "N/A" },
@@ -418,9 +418,9 @@ export default function PropertyDetailsPage() {
                   { label: "Locality Context", val: property.locality || "N/A" },
                   { label: "City Zone", val: property.city || "N/A" },
                 ].map((spec, i) => (
-                  <div key={i} style={{ display: "flex", justifyContent: "space-between", borderBottom: "1px solid #f1f5f9", paddingBottom: 8 }}>
-                    <span style={{ color: "#94a3b8", fontSize: 13, fontWeight: 500 }}>{spec.label}</span>
-                    <span style={{ color: "#1a3c5e", fontSize: 13, fontWeight: 700 }}>{spec.val}</span>
+                  <div className="spec-row" key={i}>
+                    <span className="spec-label">{spec.label}</span>
+                    <span className="spec-value">{spec.val}</span>
                   </div>
                 ))}
               </div>
@@ -508,12 +508,13 @@ export default function PropertyDetailsPage() {
             <h2 className="similar-title">Similar Listings You May Like</h2>
             <div className="similar-grid">
               {similarProperties.map((prop, idx) => (
-                <PropertyCard 
-                  key={prop.id} 
-                  prop={prop} 
-                  delay={idx * 0.05} 
-                  visible={true}
-                />
+                <div className="similar-card-wrap" key={prop.id}>
+                  <PropertyCard 
+                    prop={prop} 
+                    delay={idx * 0.05} 
+                    visible={true}
+                  />
+                </div>
               ))}
             </div>
           </div>

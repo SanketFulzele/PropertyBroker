@@ -1,6 +1,6 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Clock, Share2, ExternalLink, MessageCircle, BookOpen } from "lucide-react";
+import { ArrowLeft, Clock, Share2, ExternalLink, MessageCircle, BookOpen, ChevronDown } from "lucide-react";
 import { Badge } from "../baseComponents";
 import { GUIDE_ARTICLES } from "../data/guidesData";
 import "../styles/guides.css";
@@ -8,6 +8,7 @@ import "../styles/guides.css";
 export default function GuideDetailPage() {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
+  const [tocOpen, setTocOpen] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -54,10 +55,10 @@ export default function GuideDetailPage() {
 
   return (
     <div>
-      <a className="guides-detail-back" onClick={() => navigate("/guides")} style={{ cursor: "pointer" }}>
+      <button className="guides-detail-back" onClick={() => navigate("/guides")}>
         <ArrowLeft size={16} />
         Back to Guides
-      </a>
+      </button>
 
       {/* Hero */}
       <section className="guides-detail-hero">
@@ -80,13 +81,31 @@ export default function GuideDetailPage() {
 
       {/* Body */}
       <div className="guides-detail-body">
+        {/* Table of Contents Toggle (Mobile) */}
+        <button
+          className="guides-toc-toggle"
+          onClick={() => setTocOpen(!tocOpen)}
+          aria-expanded={tocOpen}
+          aria-controls="guide-toc"
+        >
+          <span>Table of Contents</span>
+          <ChevronDown
+            size={16}
+            className={`guides-toc-toggle-icon ${tocOpen ? "guides-toc-toggle-icon-open" : ""}`}
+          />
+        </button>
+
         {/* Table of Contents */}
-        <div className="guides-detail-toc">
+        <div id="guide-toc" className={`guides-detail-toc ${tocOpen ? "guides-detail-toc-open" : ""}`}>
           <h3 className="guides-detail-toc-title">Table of Contents</h3>
           <ul className="guides-detail-toc-list">
             {guide.content.map((section, i) => (
               <li key={i} className="guides-detail-toc-item">
-                <a href={`#section-${i}`} className="guides-detail-toc-link">
+                <a
+                  href={`#section-${i}`}
+                  className="guides-detail-toc-link"
+                  onClick={() => setTocOpen(false)}
+                >
                   {section.title}
                 </a>
               </li>
@@ -95,52 +114,54 @@ export default function GuideDetailPage() {
         </div>
 
         {/* Content Sections */}
-        {guide.content.map((section, i) => (
-          <div key={i} id={`section-${i}`} className="guides-detail-section">
-            <h2 className="guides-detail-section-title">{section.title}</h2>
-            <div className="guides-detail-section-content">{section.content}</div>
+        <div>
+          {guide.content.map((section, i) => (
+            <div key={i} id={`section-${i}`} className="guides-detail-section">
+              <h2 className="guides-detail-section-title">{section.title}</h2>
+              <div className="guides-detail-section-content">{section.content}</div>
 
-            {section.image && (
-              <img src={section.image} alt={section.title} className="guides-detail-section-image" />
-            )}
+              {section.image && (
+                <img src={section.image} alt={section.title} className="guides-detail-section-image" />
+              )}
 
-            {section.quote && (
-              <div className="guides-detail-quote">
-                <p>&ldquo;{section.quote}&rdquo;</p>
-              </div>
-            )}
+              {section.quote && (
+                <div className="guides-detail-quote">
+                  <p>&ldquo;{section.quote}&rdquo;</p>
+                </div>
+              )}
 
-            {section.tip && (
-              <div className="guides-detail-tip">
-                <div className="guides-detail-tip-label">Pro Tip</div>
-                <p>{section.tip}</p>
-              </div>
-            )}
+              {section.tip && (
+                <div className="guides-detail-tip">
+                  <div className="guides-detail-tip-label">Pro Tip</div>
+                  <p>{section.tip}</p>
+                </div>
+              )}
 
-            {section.info && (
-              <div className="guides-detail-info">
-                <div className="guides-detail-info-label">Good to Know</div>
-                <p>{section.info}</p>
-              </div>
-            )}
+              {section.info && (
+                <div className="guides-detail-info">
+                  <div className="guides-detail-info-label">Good to Know</div>
+                  <p>{section.info}</p>
+                </div>
+              )}
+            </div>
+          ))}
+
+          {/* Share */}
+          <div className="guides-detail-share">
+            <span className="guides-detail-share-label">Share this guide:</span>
+            <button className="guides-detail-share-btn" onClick={() => handleShare("facebook")} title="Share on Facebook">
+              <ExternalLink size={16} />
+            </button>
+            <button className="guides-detail-share-btn" onClick={() => handleShare("twitter")} title="Share on Twitter">
+              <MessageCircle size={16} />
+            </button>
+            <button className="guides-detail-share-btn" onClick={() => handleShare("linkedin")} title="Share on LinkedIn">
+              <BookOpen size={16} />
+            </button>
+            <button className="guides-detail-share-btn" onClick={handleCopyLink} title="Copy link">
+              <Share2 size={16} />
+            </button>
           </div>
-        ))}
-
-        {/* Share */}
-        <div className="guides-detail-share">
-          <span className="guides-detail-share-label">Share this guide:</span>
-          <button className="guides-detail-share-btn" onClick={() => handleShare("facebook")} title="Share on Facebook">
-            <ExternalLink size={16} />
-          </button>
-          <button className="guides-detail-share-btn" onClick={() => handleShare("twitter")} title="Share on Twitter">
-            <MessageCircle size={16} />
-          </button>
-          <button className="guides-detail-share-btn" onClick={() => handleShare("linkedin")} title="Share on LinkedIn">
-            <BookOpen size={16} />
-          </button>
-          <button className="guides-detail-share-btn" onClick={handleCopyLink} title="Copy link">
-            <Share2 size={16} />
-          </button>
         </div>
       </div>
 

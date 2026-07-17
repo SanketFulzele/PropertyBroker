@@ -7,10 +7,10 @@ function StatCard({ stat, visible }: { stat: Stat; visible: boolean }) {
 
   return (
     <div
+      className="stat-card"
       style={{
         textAlign: "center",
         padding: "24px 0",
-        borderRight: "1px solid #f1f5f9",
       }}
     >
       <div
@@ -45,6 +45,7 @@ export default function StatsSection() {
   return (
     <section
       ref={ref}
+      className="stats-section"
       style={{
         padding: "60px 40px",
         background: "#fff",
@@ -52,13 +53,7 @@ export default function StatsSection() {
       }}
     >
       <div
-        style={{
-          maxWidth: 1100,
-          margin: "0 auto",
-          display: "grid",
-          gridTemplateColumns: "repeat(4, 1fr)",
-          gap: 0,
-        }}
+        className="stats-grid"
       >
         {STATS.map((stat, i) => (
           <div

@@ -6,6 +6,7 @@ import StatsSection from '../components/StatsSection'
 import HomeInvestmentSection from '../components/HomeInvestmentSection'
 import HeroSection from '../components/HeroSection'
 import FormComponent from '../components/FormComponent'
+import '../styles/homeResponsive.css'
 
 const Home = () => {
   return (

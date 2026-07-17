@@ -30,6 +30,7 @@ export default function WhyUsSection() {
   return (
     <section
       ref={ref}
+      className="whyus-section"
       style={{
         padding: "100px 40px",
         background:
@@ -85,11 +86,7 @@ export default function WhyUsSection() {
 
         {/* Cards */}
         <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(4, 1fr)",
-            gap: 24,
-          }}
+          className="whyus-grid"
         >
           {features.map((f, i) => {
             const Icon = f.icon;
@@ -97,6 +94,7 @@ export default function WhyUsSection() {
             return (
               <div
                 key={i}
+                className="whyus-card"
                 style={{
                   background: "rgba(255,255,255,0.06)",
                   backdropFilter: "blur(12px)",

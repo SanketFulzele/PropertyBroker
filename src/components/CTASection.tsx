@@ -9,19 +9,17 @@ export default function CTASection() {
   return (
     <section
       ref={ref}
+      className="cta-section"
       style={{
         padding: "100px 40px",
         background: "#f8fafc",
       }}
     >
       <div
+        className="cta-section-inner"
         style={{
-          maxWidth: 900,
-          margin: "0 auto",
           textAlign: "center",
           background: "linear-gradient(135deg, #1e3a5f 0%, #2563eb 100%)",
-          borderRadius: 28,
-          padding: "72px 48px",
           boxShadow: "0 25px 60px rgba(37,99,235,0.3)",
           position: "relative",
           overflow: "hidden",
@@ -77,10 +75,8 @@ export default function CTASection() {
           Join 1.2 million happy homeowners who found their perfect property on PropertyBroker.
         </p>
         <div
+          className="cta-buttons"
           style={{
-            display: "flex",
-            gap: 16,
-            justifyContent: "center",
             position: "relative",
           }}
         >
