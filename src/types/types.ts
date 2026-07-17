@@ -57,3 +57,50 @@ export interface Locality {
   startingPrice: string;
   image: string;
 }
+
+export interface GuideCategory {
+  id: string;
+  title: string;
+  description: string;
+  icon: string;
+  articleCount: number;
+  slug: string;
+}
+
+export interface GuideArticle {
+  id: number;
+  slug: string;
+  title: string;
+  category: string;
+  categorySlug: string;
+  description: string;
+  excerpt: string;
+  readingTime: string;
+  publishDate: string;
+  coverImage: string;
+  author: string;
+  tags: string[];
+  featured: boolean;
+  content: GuideSection[];
+}
+
+export interface GuideSection {
+  title: string;
+  content: string;
+  image?: string;
+  quote?: string;
+  tip?: string;
+  info?: string;
+}
+
+export interface DownloadableResource {
+  id: number;
+  title: string;
+  description: string;
+  icon: string;
+}
+
+export interface FAQ {
+  question: string;
+  answer: string;
+}

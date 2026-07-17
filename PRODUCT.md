@@ -35,6 +35,8 @@ Routes:
 - `/filter?locality=Manish%20Nagar` — Filter with query parameters
 - `/property/:slug` — Property details page
 - `/privacy-policy` — Privacy policy page
+- `/guides` — Property Guides / Knowledge Center
+- `/guides/:slug` — Individual guide detail page
 
 #### Static Assets Not Affected
 
@@ -182,6 +184,72 @@ All WhatsApp and phone interactions flow through `src/utils/contact.ts`:
 #### Future Provider Support
 
 To add GA4 or GTM, add tracking calls inside `src/utils/analytics.ts` — each function already supports multiple providers via the `getFbq()` pattern. Add `window.gtag` calls alongside `fbq` calls. Component code stays untouched.
+
+---
+
+### Property Guides / Knowledge Center
+
+**Goal:** Build a content hub with guide listings (`/guides`) and individual guide detail pages (`/guides/:slug`) to drive organic traffic, educate users, and funnel leads to the filter/contact pages.
+
+#### 1. Routing
+
+| Route | Component | Description |
+|---|---|---|
+| `/guides` | `GuidesPage` (lazy) | All guides, search, categories, resources, FAQ, newsletter, CTA |
+| `/guides/:slug` | `GuideDetailPage` (lazy) | Individual guide with hero, TOC, content sections, share, related |
+
+Both routes are lazy-loaded via `React.lazy` with a Suspense fallback in `App.tsx`.
+
+#### 2. Data Layer
+
+| File | Exports |
+|---|---|
+| `src/types/types.ts` | `GuideCategory`, `GuideArticle`, `GuideSection`, `DownloadableResource`, `FAQ` |
+| `src/data/guidesData.ts` | `GUIDE_CATEGORIES` (6), `GUIDE_ARTICLES` (12), `POPULAR_TOPICS` (12), `DOWNLOADABLE_RESOURCES` (4), `GUIDES_FAQS` (6) |
+
+#### 3. Component Architecture
+
+**Listing Page (`GuidesPage.tsx`) sections:**
+
+| Component | File | Purpose |
+|---|---|---|
+| `GuidesHeroSection` | `src/components/GuidesHeroSection.tsx` | Hero with search bar, badge, subtitle |
+| `FeaturedGuide` | `src/components/FeaturedGuide.tsx` | Large featured guide card (2-column) |
+| `GuideCategories` | `src/components/GuideCategories.tsx` | 6 category cards with icon, title, count |
+| `GuidesGrid` | `src/components/GuidesGrid.tsx` | 3-column card grid with image, badge, reading time |
+| `PopularTopics` | `src/components/PopularTopics.tsx` | Tag chips for quick topic filtering |
+| `DownloadableResources` | `src/components/DownloadableResources.tsx` | 4 downloadable PDF resource cards |
+| `GuidesNewsletter` | `src/components/GuidesNewsletter.tsx` | Email subscription form (cosmetic) |
+| `GuidesFAQ` | `src/components/GuidesFAQ.tsx` | Accordion FAQ list |
+| `GuidesCTA` | `src/components/GuidesCTA.tsx` | Browse Properties + Contact Experts buttons |
+
+**Detail Page (`GuideDetailPage.tsx`):**
+
+- Hero with full-width cover image and gradient overlay
+- Table of Contents with auto-numbered links
+- Content sections with optional image, quote, tip, and info callouts
+- Share buttons (Facebook, Twitter, LinkedIn, copy link)
+- Related guides grid (same category, max 3)
+
+#### 4. Filtering & Search
+
+- Hero search bar filters guides by title, description, tags, and category (client-side)
+- Popular Topics chips toggle category filtering; clicking an active chip clears it
+- URL params (`/guides?category=buying`) supported via `useSearchParams`
+
+#### 5. Styling
+
+| File | Contents |
+|---|---|
+| `src/styles/guides.css` | All listing + detail page styles, responsive breakpoints at 1024px and 640px |
+
+Design system: Playfair Display headings, DM Sans body, `#1a3c5e` navy, `#2563eb` blue, `#60a5fa` accent, `#f8fafc` light bg, `#e2e8f0` borders. Dark gradient for newsletter/CTA sections.
+
+#### 6. Footer Integration
+
+- `DEVELOPED_ROUTES` includes `/guides`
+- `isRouteDeveloped()` handles `/guides/*` prefix
+- "Guides" link added to the Support column
 
 ---
 

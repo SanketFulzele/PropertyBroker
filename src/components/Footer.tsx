@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { Logo } from "../baseComponents";
 import "../styles/footer.css";
 
-const DEVELOPED_ROUTES = ["/", "/filter", "/privacy-policy"];
+const DEVELOPED_ROUTES = ["/", "/filter", "/privacy-policy", "/guides"];
 
 export default function Footer() {
   const year = new Date().getFullYear();
@@ -29,10 +29,10 @@ export default function Footer() {
     {
       title: "Support",
       links: [
+        { label: "Guides", path: "/guides" },
         { label: "Help Center", path: "/help" },
         { label: "Contact Us", path: "/contact" },
         { label: "Privacy Policy", path: "/privacy-policy" },
-        { label: "Terms", path: "/terms" },
       ],
     },
   ];
@@ -40,6 +40,7 @@ export default function Footer() {
   const isRouteDeveloped = (path: string) => {
     if (DEVELOPED_ROUTES.includes(path)) return true;
     if (path.startsWith("/property/")) return true;
+    if (path.startsWith("/guides")) return true;
     return false;
   };
 

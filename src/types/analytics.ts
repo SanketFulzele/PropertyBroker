@@ -33,7 +33,8 @@ export interface TrackContactParams {
     | "property_details"
     | "footer"
     | "hero"
-    | "filter_page";
+    | "filter_page"
+    | "guides";
   propertyId?: string;
   propertyName?: string;
 }

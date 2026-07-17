@@ -4,13 +4,15 @@ const PHONE_NUMBER = "919921215145";
 const PHONE_DISPLAY = "9921215145";
 const SITE_URL = "https://property-broker-ngp.vercel.app";
 
+type ContactSource = "navbar" | "whatsapp_float" | "property_card" | "property_details" | "footer" | "hero" | "filter_page" | "guides";
+
 interface WhatsAppParams {
   message?: string;
   propertyName?: string;
   propertyLocation?: string;
   propertyPrice?: string;
   propertySlug?: string;
-  source: "navbar" | "whatsapp_float" | "property_card" | "property_details" | "footer" | "hero" | "filter_page";
+  source: ContactSource;
   propertyId?: string;
 }
 
@@ -39,7 +41,7 @@ export function openWhatsApp({
 }
 
 interface PhoneCallParams {
-  source: "navbar" | "whatsapp_float" | "property_card" | "property_details" | "footer" | "hero" | "filter_page";
+  source: ContactSource;
   propertyId?: string;
   propertyName?: string;
 }
