@@ -266,7 +266,7 @@ To become Nagpur's most trusted digital real estate platform by providing transp
 
 - Lazy loading for guide pages (`React.lazy` + `Suspense`)
 - Intersection Observer for scroll animations (avoids unnecessary paint)
-- Debounced search tracking (800ms)
+- Debounced filter-change tracking (800ms) — Search event fires on hero search click and on sidebar filter changes
 - Client-side filtering (no API latency)
 
 ### Accessibility
@@ -494,7 +494,7 @@ If authentication is added later, it will need to be introduced from scratch.
 | Event | Function | Where Fired |
 |-------|----------|-------------|
 | **PageView** | `trackPageView()` | `MetaPixel.tsx` — every route change |
-| **Search** | `trackSearch()` | `FilterPage.tsx` — immediate on mount, then debounced on filter changes (800ms) |
+| **Search** | `trackSearch()` | `HeroSection.tsx` — on search button click; `FilterPage.tsx` — debounced on sidebar filter changes (800ms, skips mount) |
 | **ViewContent** | `trackViewContent()` | `PropertyDetailsPage.tsx` — on property load |
 | **Contact** | `trackContact()` | `contact.ts` — called by `openWhatsApp()` and `makePhoneCall()` |
 | **Lead** | `trackLead()` | `contact.ts` — called by `openWhatsApp()` and `makePhoneCall()` |

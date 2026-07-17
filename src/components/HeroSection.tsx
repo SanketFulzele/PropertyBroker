@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { NAGPUR_LOCALITY_NAMES } from "../data/nagpurLocalities";
+import { trackSearch } from "../utils/analytics";
 
 export default function HeroSection() {
   const navigate = useNavigate();
@@ -227,7 +228,10 @@ export default function HeroSection() {
 
             <button
               className="hero-search-btn"
-              onClick={() => navigate(`/property-list?locality=${encodeURIComponent(searchLocality)}`)}
+              onClick={() => {
+                trackSearch({ locality: [searchLocality], resultsCount: 0 });
+                navigate(`/property-list?locality=${encodeURIComponent(searchLocality)}`);
+              }}
               style={{
                 padding: "14px 28px",
                 borderRadius: "0 10px 10px 0",
