@@ -424,8 +424,9 @@ Components consume enriched data
 
 ### Search Analytics
 
-- Tracked on mount and debounced on filter changes (800ms)
-- Events: locality, property type, BHK, budget range, area range, furnished, results count
+- Search analytics are fired only from the explicit Search button action on the home hero section.
+- Filter page initialization and filter changes no longer emit a separate Search event.
+- Event payload includes the selected locality and result count for the user-initiated search.
 
 ---
 
@@ -494,7 +495,7 @@ If authentication is added later, it will need to be introduced from scratch.
 | Event | Function | Where Fired |
 |-------|----------|-------------|
 | **PageView** | `trackPageView()` | `MetaPixel.tsx` — every route change |
-| **Search** | `trackSearch()` | `HeroSection.tsx` — on search button click; `FilterPage.tsx` — debounced on sidebar filter changes (800ms, skips mount) |
+| **Search** | `trackSearch()` | `HeroSection.tsx` — on search button click only |
 | **ViewContent** | `trackViewContent()` | `PropertyDetailsPage.tsx` — on property load |
 | **Contact** | `trackContact()` | `contact.ts` — called by `openWhatsApp()` and `makePhoneCall()` |
 | **Lead** | `trackLead()` | `contact.ts` — called by `openWhatsApp()` and `makePhoneCall()` |

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { FILTER_PROPERTIES } from "../data/filterProperties";
 import PropertyCard from "../components/PropertyCard";
@@ -6,41 +6,14 @@ import FilterSidebar from "../components/FilterSidebar";
 import { EmptyState } from "../baseComponents";
 import { usePropertyFilters } from "../utils/usePropertyFilters";
 import { useLocalityFilter } from "../hooks/useUrlFilters";
-import { trackSearch } from "../utils/analytics";
 import "../styles/filterPage.css";
 
 export default function FilterPage() {
   const { locality: urlLocality, setLocality: setUrlLocality, clearLocality } = useLocalityFilter();
   const { filters, setFilter, clearAll, filtered, hasActiveFilters, total, shown } = usePropertyFilters(FILTER_PROPERTIES, urlLocality);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const mountedRef = useRef(false);
 
   const activeLocality = filters.locality.length === 1 ? filters.locality[0] : null;
-
-  useEffect(() => {
-    if (!mountedRef.current) {
-      mountedRef.current = true;
-      return;
-    }
-    if (debounceRef.current) clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(() => {
-      trackSearch({
-        locality: filters.locality.length > 0 ? filters.locality : undefined,
-        propertyType: filters.propertyType[0],
-        bhk: filters.bhk[0],
-        budgetMin: filters.budgetMin,
-        budgetMax: filters.budgetMax,
-        areaMin: filters.areaMin,
-        areaMax: filters.areaMax,
-        furnished: filters.furnished[0],
-        resultsCount: shown,
-      });
-    }, 800);
-    return () => {
-      if (debounceRef.current) clearTimeout(debounceRef.current);
-    };
-  }, [filters, shown]);
 
   return (
     <div className="filter-page">
