@@ -1,262 +1,777 @@
-# Product Documentation
+# PropertyBroker — Product Documentation
 
-## Changelog
-
-### SPA Routing Configuration — React Router Refresh Fix
-
-**Problem:** When users refresh or directly navigate to client-side routes (`/filter`, `/filter?locality=...`, `/property/:slug`), the hosting server returns a 404 error because it tries to find a physical file matching the path instead of serving `index.html`.
-
-**Solution:** Configured SPA rewrite rules for both Vercel and Netlify hosting platforms to serve `index.html` for all non-static routes.
-
-#### New Files
-
-| File | Purpose |
-|---|---|
-| `vercel.json` | Vercel hosting SPA rewrite configuration |
-| `public/_redirects` | Netlify hosting SPA redirect rules |
-
-#### How It Works
-
-- **Vercel (`vercel.json`):** Uses regex-based rewrite rules to route all non-static requests to `index.html`. Excludes assets, favicon, icons, robots.txt, sitemap.xml, manifest.json, and file extensions.
-- **Netlify (`_redirects`):** Uses a catch-all redirect rule `/* → /index.html` with status `200` (rewrite, not redirect).
-- **React Router:** Uses `BrowserRouter` which handles client-side routing. The server configuration ensures `index.html` is always served, allowing React Router to take over.
-
-#### Supported Routes
-
-All routes now work correctly when:
-- Opening in a new tab
-- Refreshing the page
-- Copy-pasting the URL into a new browser
-- Using browser Back/Forward buttons
-
-Routes:
-- `/` — Home page
-- `/filter` — Filter page
-- `/filter?locality=Manish%20Nagar` — Filter with query parameters
-- `/property/:slug` — Property details page
-- `/privacy-policy` — Privacy policy page
-- `/guides` — Property Guides / Knowledge Center
-- `/guides/:slug` — Individual guide detail page
-
-#### Static Assets Not Affected
-
-Rewrites do NOT interfere with:
-- Images (`.png`, `.jpg`, `.svg`, `.gif`, `.webp`)
-- Icons (`.ico`)
-- CSS files (`.css`)
-- JavaScript bundles (`.js`)
-- Manifest (`manifest.json`)
-- Robots.txt (`robots.txt`)
-- Sitemap (`sitemap.xml`)
-- Fonts (`.woff`, `.woff2`, `.ttf`, `.otf`)
+A comprehensive guide to the PropertyBroker real estate platform.
 
 ---
 
-### Scroll Position Fix — Route-Based Scroll Restoration
-* **Problem:** Navigating to the Filter page (from Popular Localities cards, Hero Search, or any route transition) opened at the previous scroll position instead of the top of the page.
-* **Solution:** Added a centralized, reusable `ScrollToTop` component that automatically scrolls to the top of the window on every route change.
-* **Impact:** Affects [App.tsx](file:///d:/Sanket/GitSanket/PropertyBroker/src/App.tsx) and resolves scroll reset issues globally across all routes.
+## Table of Contents
+
+1. [Product Overview](#1-product-overview)
+2. [Vision and Goals](#2-vision-and-goals)
+3. [Tech Stack](#3-tech-stack)
+4. [Features](#4-features)
+5. [User Roles](#5-user-roles)
+6. [User Journeys](#6-user-journeys)
+7. [Business Rules](#7-business-rules)
+8. [Functional Requirements](#8-functional-requirements)
+9. [Non-Functional Requirements](#9-non-functional-requirements)
+10. [Current Implementation Status](#10-current-implementation-status)
+11. [Property Module](#11-property-module)
+12. [Guide Module](#12-guide-module)
+13. [Search and Filtering](#13-search-and-filtering)
+14. [Authentication](#14-authentication)
+15. [Admin Functionality](#15-admin-functionality)
+16. [SEO Features](#16-seo-features)
+17. [Analytics and Tracking](#17-analytics-and-tracking)
+18. [Responsive Design](#18-responsive-design)
+19. [Project Structure](#19-project-structure)
+20. [Development Guidelines](#20-development-guidelines)
+21. [Future Roadmap](#21-future-roadmap)
+22. [Known Limitations](#22-known-limitations)
 
 ---
 
-### Property Details Page Feature
-* **Goal:** Create a modern, high-converting details view for properties to display extensive parameters, amenities, and drives leads through a sticky call-to-action bar.
+## 1. Product Overview
 
-#### 1. Routing Architecture
-* **URL Structure:** Preferred route is `/property/:slug` with fallback matching of `/property/:id`.
-* **Behavior:** Every [PropertyCard](file:///d:/Sanket/GitSanket/PropertyBroker/src/components/PropertyCard.tsx) (used in the Search/Filters grid and Featured Carousels) is wrapped with a stretched anchor overlay that opens the property details page in a **new browser tab** (`target="_blank" rel="noopener noreferrer"`). This preserves the user's active filter states on the search page.
-* **Deep Linking:** Deep links are fully supported. Since routing relies on React Router, refreshes load the correct property details page by querying the combined lookup pool.
-* **Error Handling:** If an invalid slug or ID is typed, a clean **Property Not Found** page renders with a button directing back to the active listings filter page.
+PropertyBroker is a React + TypeScript single-page application for real estate in Nagpur, India. It serves as a marketing and lead-generation website that showcases properties, provides educational content through a guides section, and drives user inquiries through WhatsApp and phone calls.
 
-#### 2. Data Architecture & Property Model
-Defined in [types.ts](file:///d:/Sanket/GitSanket/PropertyBroker/src/types/types.ts) and enriched at runtime using the utility [propertyEnricher.ts](file:///d:/Sanket/GitSanket/PropertyBroker/src/utils/propertyEnricher.ts):
-* **Fields Supported:** `id`, `slug`, `title`, `description`, `price`, `propertyType` (type), `bhk`, `bedrooms`, `bathrooms`, `area`, `locality`, `city`, `address`, `location`, `furnishing` (furnished), `parking`, `propertyAge`, `availability`, `facing`, `ownership`, `floor`, `totalFloors`, `amenities`, `image` (primary), `images` (multi-image array), `thumbnail`, `possession`, and `coordinates` (latitude/longitude coordinates).
-* **API Readiness:** By routing data through a unified `enrichProperties` wrapper, the UI components remain completely separated from static data files. Replacing local datasets with a backend API in the future will only require swapping the source data call in the parent pages.
+### What This Project Is
 
-#### 3. Visual Layout & Gallery
-* **Two-Column Desktop View:** Displays media gallery, overview, descriptions, and location in the main column (60% width), with a sticky builder CTA sidebar card in the right column (40% width).
-* **Responsive Breakpoints:** Under `< 1024px`, the layout stacks vertically. Under `< 768px` (mobile), the builder block transforms into a sticky bottom CTA banner, hiding developer details to maximize mobile screen real estate.
-* **Professional Gallery:**
-  * Displays a large preview image and vertical thumbnails (desktop) or horizontal scroll thumbnails (mobile).
-  * Automatically hides thumbnails when only one image is available.
-  * Pulses skeleton loaders during initial image download states and handles broken URLs gracefully with Unsplash fallback images.
-  * Connects manual chevron arrows (`ChevronLeft` / `ChevronRight`) allowing keyboard-friendly navigation.
+- A single-page marketing and lead-generation website
+- A front-end application built with Vite and React
+- A presentation-focused site rather than a full marketplace backend
+- A content hub with property guides and educational resources
 
-#### 4. Primary CTA & WhatsApp Integration
-* **Contact Options:** Integrates WhatsApp chat and direct phone links, using the configured broker number `919921215145`.
-* **Dynamic Messages:** Generates a custom, URL-encoded string detailing the listing Title, Locality, Price, and active current URL (`window.location.href`) for high-intent lead collection.
+### Main Purpose
 
-#### 5. Similar Properties Logic
-Renders a grid of 3 similar property cards at the bottom of the page, scoring candidates using a math-based utility:
-1. **Locality Match:** Candidates in the same locality receive `+12` points.
-2. **Property Type Match:** Candidates sharing the same category (e.g. Villa vs Apartment) receive `+6` points.
-3. **Budget Match:** Closer prices receive a higher score (up to `+6` points), computed by ratio distance.
-4. Excludes the current active property.
-
-#### 6. Client-Side SEO Metadata
-* Programmatically updates page elements inside React's layout effect:
-  * Document `title` is set to `<Title> | <Locality>, Nagpur`.
-  * Meta tags (`description`, `canonical`, and social cards `og:title`, `og:image`, `twitter:card`, etc.) are updated dynamically in the DOM, keeping initial bundles extremely lightweight.
+- Promote PropertyBroker as a trusted real estate platform
+- Display featured properties and city-based coverage
+- Educate users about Nagpur real estate through guides
+- Encourage visitors to contact via WhatsApp or phone
 
 ---
 
-### "Why Invest in Nagpur?" Section
+## 2. Vision and Goals
 
-* **Goal:** Educate users about Nagpur's investment potential, build trust, and drive traffic to the property filter page.
-* **Placement:** Renders between `StatsSection` and `PropertyCarousel` on the Home page.
+### Vision
 
-#### 1. Component Architecture
-* **Component:** `src/components/HomeInvestmentSection.tsx`
-* **Type Interface:** `InvestmentFeature` added to `src/types/types.ts` (`icon`, `title`, `desc`).
-* **Data-Driven:** All five features defined in a `FEATURES` array at the top of the file — new investment points can be added by appending to this array with zero layout changes.
+To become Nagpur's most trusted digital real estate platform by providing transparent property information and expert guidance.
 
-#### 2. Features Displayed
-| Icon (lucide-react) | Title | Description |
+### Goals
+
+- **Lead Generation**: Drive WhatsApp and phone inquiries from property listings
+- **SEO Traffic**: Attract organic traffic through educational guide content
+- **User Trust**: Build credibility through RERA verification badges and professional presentation
+- **Local Focus**: Dominate Nagpur-specific real estate search queries
+
+---
+
+## 3. Tech Stack
+
+| Technology | Version | Purpose |
 |---|---|---|
-| `Train` | Metro Connectivity | Public transport and road connectivity improvements |
-| `Building2` | MIHAN Growth Corridor | Industrial/IT hub driving employment and demand |
-| `IndianRupee` | Affordable Property Prices | Quality homes at prices below major metros |
-| `TrendingUp` | High Rental Demand | Rental opportunities from professionals, students, families |
-| `Landmark` | Future Infrastructure | Highways, commercial projects, smart city initiatives |
+| React | ^19.2.4 | UI library |
+| React DOM | ^19.2.4 | DOM rendering |
+| React Router DOM | ^7.14.0 | Client-side routing |
+| TypeScript | ~5.9.3 | Type safety |
+| Vite | ^8.0.1 | Build tool and dev server |
+| @emailjs/browser | ^4.4.1 | Form submission (legacy) |
+| emailjs-com | ^3.2.0 | Form submission (legacy) |
+| lucide-react | ^1.7.0 | Icons |
+| ESLint | ^9.39.4 | Linting |
 
-#### 3. Design
-* Dark premium gradient background (`#0f172a → #1e3a5f → #0f172a`) matching the existing WhyUsSection.
-* Subtle dot-grid pattern overlay for texture.
-* Glassmorphism feature cards (`rgba(255,255,255,0.06)` + `backdrop-filter: blur(12px)`).
-* Rounded icon containers with soft blue accents (`#60a5fa`).
-* Entrance animations via `useIntersectionObserver` with staggered delays.
-* Hover: card background shifts to blue tint, lifts up 4px.
+### Not Present
 
-#### 4. Responsive Behavior
-* **Desktop (>1024px):** 5-column grid.
-* **Tablet (≤1024px):** 2-column grid; 5th card spans full width centered.
-* **Mobile (≤640px):** Single column stack.
-* Breakpoints handled via embedded `<style>` tag with `!important` overrides (consistent with project patterns).
-
-#### 5. CTA Button
-* Text: "Explore Investment Areas"
-* Navigates to `/filter` via React Router `useNavigate`.
-* Styled as outline button with blue accent, hover fills with blue tint and lifts.
+- Redux / Zustand / Context API for state management
+- Tailwind / Bootstrap / SCSS / CSS Modules
+- React Hook Form / Formik / Yup / Zod
+- Axios / Fetch-based API service layer
+- Authentication system
+- Server-side rendering
 
 ---
 
-### Analytics & Event Tracking System
+## 4. Features
 
-**Goal:** Centralize all analytics tracking into a single utility layer, making it easy to swap providers (Meta Pixel, GA4, GTM) without touching component code.
+### Implemented Features
 
-#### Architecture
+| Feature | Status | Description |
+|---------|--------|-------------|
+| Sticky Navigation | Done | Responsive navbar with mobile menu, phone CTA |
+| Hero Section | Done | Search-style UI with locality dropdown |
+| Stats Section | Done | Animated counters (2,500+ listings, 15+ localities, etc.) |
+| Investment Section | Done | "Why Invest in Nagpur?" with 5 features |
+| Property Carousel | Done | Horizontal scroll carousel with drag interaction |
+| Why Choose Us | Done | 4 value proposition cards |
+| CTA Section | Done | Call-to-action with WhatsApp + navigate |
+| Localities Section | Done | 8 Nagpur locality cards |
+| Form Component | Done | Lead capture form (cosmetic, EmailJS legacy) |
+| Filter Page | Done | 13-category filter with sidebar, URL sync |
+| Property Details | Done | Full detail page with gallery, specs, similar properties |
+| Guides Listing | Done | Search, categories, articles, resources, FAQ |
+| Guide Detail | Done | TOC, content sections, share, related guides |
+| Privacy Policy | Done | Static privacy policy page |
+| WhatsApp Float | Done | Floating WhatsApp button with pre-filled messages |
+| Meta Pixel | Done | Facebook Pixel tracking with PageView on route change |
+| Scroll to Top | Done | Automatic scroll restoration on route change |
+| SPA Routing | Done | Vercel + Netlify rewrite rules for client-side routing |
+| Responsive Design | Done | Mobile-first responsive across all pages |
 
-| File | Purpose |
-|---|---|
-| `src/types/analytics.ts` | TypeScript interfaces for all event parameters |
-| `src/utils/analytics.ts` | Centralized tracking functions (Meta Pixel + future GA4/GTM) |
-| `src/utils/contact.ts` | WhatsApp/Phone helpers that track + execute actions |
+### Contact System
 
-#### Tracked Events
-
-| Event | Function | Where Fired |
-|---|---|---|
-| **PageView** | `trackPageView()` | `MetaPixel.tsx` — every route change |
-| **Search** | `trackSearch()` | `FilterPage.tsx` — on mount + debounced filter changes (800ms) |
-| **ViewContent** | `trackViewContent()` | `PropertyDetailsPage.tsx` — once on property load |
-| **Contact** | `trackContact()` | `contact.ts` — called by `openWhatsApp()` and `makePhoneCall()` |
-| **Lead** | `trackLead()` | `contact.ts` — called by `openWhatsApp()` and `makePhoneCall()` |
-
-#### Contact Utility
-
-All WhatsApp and phone interactions flow through `src/utils/contact.ts`:
-- `openWhatsApp({...})` — opens WhatsApp with tracking, supports property-specific messages
-- `makePhoneCall({...})` — initiates call with tracking
-- `getWhatsAppUrl()` / `getPhoneUrl()` — URL generators without side effects
-- Phone number centralized: `919921215145` (+91 99212 15145)
-
-#### Integration Points
-
-| Component | Action Tracked |
-|---|---|
-| `WhatsAppFloat.tsx` | WhatsApp via `openWhatsApp({ source: "whatsapp_float" })` |
-| `Navbar.tsx` | Phone via `makePhoneCall({ source: "navbar" })` |
-| `PropertyCard.tsx` | WhatsApp via `openWhatsApp({ source: "property_card", ... })` |
-| `PropertyDetailsPage.tsx` | WhatsApp + Phone via contact utils, ViewContent on load |
-| `FilterPage.tsx` | Search on mount + debounced filter changes |
-| `MetaPixel.tsx` | PageView on every route change via `trackPageView()` |
-
-#### Future Provider Support
-
-To add GA4 or GTM, add tracking calls inside `src/utils/analytics.ts` — each function already supports multiple providers via the `getFbq()` pattern. Add `window.gtag` calls alongside `fbq` calls. Component code stays untouched.
+| Channel | Implementation |
+|---------|---------------|
+| WhatsApp | `openWhatsApp()` — opens pre-filled WhatsApp message with property details |
+| Phone | `makePhoneCall()` — initiates `tel:` call to +91 99212 15145 |
 
 ---
 
-### Property Guides / Knowledge Center
+## 5. User Roles
 
-**Goal:** Build a content hub with guide listings (`/guides`) and individual guide detail pages (`/guides/:slug`) to drive organic traffic, educate users, and funnel leads to the filter/contact pages.
+| Role | Description | Access Level |
+|------|-------------|-------------|
+| **Visitor** | Anonymous user browsing the website | Full read access to all public pages |
+| **Admin** | (Not implemented) | N/A |
 
-#### 1. Routing
+---
 
-| Route | Component | Description |
-|---|---|---|
-| `/guides` | `GuidesPage` (lazy) | All guides, search, categories, resources, FAQ, newsletter, CTA |
-| `/guides/:slug` | `GuideDetailPage` (lazy) | Individual guide with hero, TOC, content sections, share, related |
+## 6. User Journeys
 
-Both routes are lazy-loaded via `React.lazy` with a Suspense fallback in `App.tsx`.
+### Journey 1: Property Discovery
 
-#### 2. Data Layer
+1. User lands on Home page
+2. Browses featured properties in carousel
+3. Clicks "View Details" on a property card
+4. Property details open in new tab (preserving filter state)
+5. User views gallery, specs, amenities, location
+6. User clicks "Connect on WhatsApp" or "Call Company Advisor"
+7. Contact action is tracked (ViewContent → Contact → Lead)
 
-| File | Exports |
-|---|---|
-| `src/types/types.ts` | `GuideCategory`, `GuideArticle`, `GuideSection`, `DownloadableResource`, `FAQ` |
-| `src/data/guidesData.ts` | `GUIDE_CATEGORIES` (6), `GUIDE_ARTICLES` (12), `POPULAR_TOPICS` (12), `DOWNLOADABLE_RESOURCES` (4), `GUIDES_FAQS` (6) |
+### Journey 2: Filtered Search
 
-#### 3. Component Architecture
+1. User navigates to `/filter` (from hero search, locality cards, or navbar)
+2. Applies filters (locality, type, BHK, budget, etc.)
+3. Browses filtered property grid
+4. Clicks property card → opens in new tab
+5. Completes contact action
 
-**Listing Page (`GuidesPage.tsx`) sections:**
+### Journey 3: Content Discovery
+
+1. User navigates to `/guides` (from footer link)
+2. Browses guide categories or uses search
+3. Reads a guide article
+4. Navigates to filter page via CTA ("Browse Properties")
+
+### Journey 4: Deep Link
+
+1. User receives a direct link (e.g., `/property/vrindavan-heights-1`)
+2. Page loads with correct property data
+3. User views details and makes contact
+
+---
+
+## 7. Business Rules
+
+### Property Rules
+
+- Every property must have a unique `id` across both data files
+- Featured properties use IDs 1–6; filter properties use IDs 101–125
+- Price must be formatted with `₹` symbol and `L`/`Cr` suffix
+- Primary `image` URL is required for every property
+- 5 gallery `images` URLs should be provided for each property
+- Locality must match entries in `nagpurLocalities.ts`
+
+### Contact Rules
+
+- WhatsApp number: `919921215145` (+91 99212 15145)
+- Phone number: `+91 99212 15145`
+- All contact actions are tracked via Meta Pixel
+- Property details are included in WhatsApp messages
+
+### Filter Rules
+
+- All 13 filter categories are applied simultaneously (AND logic)
+- Budget and area use range sliders with min/max values
+- BHK "4+ BHK" matches any property with 4 or more bedrooms
+- URL query parameter `?locality=...` pre-filters the results
+
+### Property Details Rules
+
+- Similar properties are scored by locality match (+12), type match (+6), and budget proximity (up to +6)
+- Top 3 similar properties are displayed
+- Property cards open in new tabs to preserve filter state
+
+---
+
+## 8. Functional Requirements
+
+### Home Page
+
+- [x] Display hero section with locality search
+- [x] Display animated stats counters
+- [x] Display "Why Invest in Nagpur?" section with 5 features
+- [x] Display featured property carousel with horizontal scroll
+- [x] Display "Why Choose Us" section
+- [x] Display CTA section with WhatsApp + navigate buttons
+- [x] Display 8 locality cards
+- [x] Display contact form
+
+### Filter Page
+
+- [x] Display 13-category filter sidebar
+- [x] Display responsive property grid
+- [x] Sync locality filter with URL query parameters
+- [x] Track search events with debounced analytics
+- [x] Show empty state when no properties match
+
+### Property Details Page
+
+- [x] Display breadcrumb navigation
+- [x] Display property header with title, location, price
+- [x] Display image gallery with thumbnails and navigation
+- [x] Display detailed specs grid (2 columns)
+- [x] Display amenities list
+- [x] Display sticky CTA sidebar with WhatsApp + phone
+- [x] Display 3 similar properties
+- [x] Handle loading state with skeleton animations
+- [x] Handle not-found state
+- [x] Update SEO metadata dynamically
+
+### Guides Page
+
+- [x] Display hero section with search
+- [x] Display featured guide card
+- [x] Display 6 guide categories
+- [x] Display guide grid with cards
+- [x] Display popular topics chips
+- [x] Display downloadable resources
+- [x] Display newsletter section (cosmetic)
+- [x] Display FAQ accordion
+- [x] Display CTA section
+
+### Guide Detail Page
+
+- [x] Display hero with cover image
+- [x] Display table of contents (collapsible on mobile)
+- [x] Display content sections with images, quotes, tips, info
+- [x] Display share buttons (Facebook, Twitter, LinkedIn, copy)
+- [x] Display related guides (same category, max 3)
+- [x] Handle not-found state
+
+---
+
+## 9. Non-Functional Requirements
+
+### Performance
+
+- Lazy loading for guide pages (`React.lazy` + `Suspense`)
+- Intersection Observer for scroll animations (avoids unnecessary paint)
+- Debounced search tracking (800ms)
+- Client-side filtering (no API latency)
+
+### Accessibility
+
+- Semantic HTML navigation (`<nav>` with `aria-label`)
+- Keyboard-navigable gallery arrows
+- 44px minimum touch targets on mobile CTAs
+
+### SEO
+
+- Dynamic meta tags (title, description, OG tags, Twitter cards)
+- Canonical URL injection
+- Semantic HTML structure
+
+### Browser Support
+
+- Modern browsers (Chrome, Firefox, Safari, Edge)
+- Mobile browsers (iOS Safari, Chrome Android)
+
+---
+
+## 10. Current Implementation Status
+
+| Module | Status | Notes |
+|--------|--------|-------|
+| Home Page | Complete | All sections implemented and responsive |
+| Filter Page | Complete | 13-category filter with URL sync |
+| Property Details | Complete | Gallery, specs, similar, CTA |
+| Guides Listing | Complete | Search, categories, articles |
+| Guide Detail | Complete | TOC, content, share, related |
+| Privacy Policy | Complete | Static page |
+| Analytics | Complete | Meta Pixel with 5 tracked events |
+| Contact System | Complete | WhatsApp + Phone with tracking |
+| Responsive Design | Complete | Mobile-first across all pages |
+| Authentication | Not started | No auth system |
+| Admin Panel | Not started | No admin functionality |
+| Backend API | Not started | All data is static |
+
+---
+
+## 11. Property Module
+
+### Data Flow
+
+```
+Raw Data (data.ts / filterProperties.ts)
+    ↓
+enrichProperties() (propertyEnricher.ts)
+    ↓
+Enriched Property objects (slug, bedrooms, images, coordinates, etc.)
+    ↓
+Components consume enriched data
+```
+
+### Property Interface
+
+37 fields total. See [DATA_ARCHITECTURE.md](./DATA_ARCHITECTURE.md) for complete field documentation.
+
+### Key Components
 
 | Component | File | Purpose |
-|---|---|---|
-| `GuidesHeroSection` | `src/components/GuidesHeroSection.tsx` | Hero with search bar, badge, subtitle |
-| `FeaturedGuide` | `src/components/FeaturedGuide.tsx` | Large featured guide card (2-column) |
-| `GuideCategories` | `src/components/GuideCategories.tsx` | 6 category cards with icon, title, count |
-| `GuidesGrid` | `src/components/GuidesGrid.tsx` | 3-column card grid with image, badge, reading time |
-| `PopularTopics` | `src/components/PopularTopics.tsx` | Tag chips for quick topic filtering |
-| `DownloadableResources` | `src/components/DownloadableResources.tsx` | 4 downloadable PDF resource cards |
-| `GuidesNewsletter` | `src/components/GuidesNewsletter.tsx` | Email subscription form (cosmetic) |
-| `GuidesFAQ` | `src/components/GuidesFAQ.tsx` | Accordion FAQ list |
-| `GuidesCTA` | `src/components/GuidesCTA.tsx` | Browse Properties + Contact Experts buttons |
+|-----------|------|---------|
+| `PropertyCard` | `src/components/PropertyCard.tsx` | Reusable card with image, badge, specs, CTA |
+| `PropertyCarousel` | `src/components/PropertyCarousel.tsx` | Horizontal scroll carousel on home page |
+| `PropertyDetailsPage` | `src/pages/PropertyDetailsPage.tsx` | Full detail view with gallery, specs, similar |
+| `FilterSidebar` | `src/components/FilterSidebar.tsx` | 13-category filter panel |
+| `FilterPage` | `src/pages/FilterPage.tsx` | Grid layout with sidebar + property cards |
 
-**Detail Page (`GuideDetailPage.tsx`):**
+### Property Card Behavior
+
+- Cards open property details in a **new browser tab** (`target="_blank"`)
+- This preserves the user's active filter state on the search page
+- WhatsApp button on card sends property-specific message
+- Stretched link overlay covers entire card for click target
+
+### Similar Properties Algorithm
+
+1. Score each candidate property (excluding current)
+2. Same locality → +12 points
+3. Same property type → +6 points
+4. Similar price (ratio-based) → up to +6 points
+5. Sort by score descending, take top 3
+
+---
+
+## 12. Guide Module
+
+### Data Structure
+
+| Export | Count | Description |
+|--------|-------|-------------|
+| `GUIDE_CATEGORIES` | 6 | Buying, Selling, Investing, Legal, Home Loans, Interiors |
+| `GUIDE_ARTICLES` | 12 | Full articles with sections, images, quotes, tips |
+| `POPULAR_TOPICS` | 12 | Tag chips for quick filtering |
+| `DOWNLOADABLE_RESOURCES` | 4 | PDF resource cards (cosmetic) |
+| `GUIDES_FAQS` | 6 | Accordion FAQ items |
+
+### Listing Page Sections
+
+| Section | Component | Description |
+|---------|-----------|-------------|
+| Hero | `GuidesHeroSection` | Search bar, badge, subtitle |
+| Featured | `FeaturedGuide` | Large 2-column featured guide card |
+| Categories | `GuideCategories` | 6 category cards with icons |
+| Grid | `GuidesGrid` | 3-column article cards |
+| Topics | `PopularTopics` | Tag chips for filtering |
+| Resources | `DownloadableResources` | 4 PDF resource cards |
+| Newsletter | `GuidesNewsletter` | Email subscription (cosmetic) |
+| FAQ | `GuidesFAQ` | Accordion FAQ list |
+| CTA | `GuidesCTA` | Browse Properties + Contact buttons |
+
+### Detail Page Features
 
 - Hero with full-width cover image and gradient overlay
-- Table of Contents with auto-numbered links
+- Collapsible table of contents (toggle on mobile)
 - Content sections with optional image, quote, tip, and info callouts
 - Share buttons (Facebook, Twitter, LinkedIn, copy link)
 - Related guides grid (same category, max 3)
+- Back button navigation
 
-#### 4. Filtering & Search
+### Filtering
 
-- Hero search bar filters guides by title, description, tags, and category (client-side)
-- Popular Topics chips toggle category filtering; clicking an active chip clears it
+- Hero search bar filters by title, description, tags, and category
+- Popular Topics chips toggle category filtering
 - URL params (`/guides?category=buying`) supported via `useSearchParams`
-
-#### 5. Styling
-
-| File | Contents |
-|---|---|
-| `src/styles/guides.css` | All listing + detail page styles, responsive breakpoints at 1024px and 640px |
-
-Design system: Playfair Display headings, DM Sans body, `#1a3c5e` navy, `#2563eb` blue, `#60a5fa` accent, `#f8fafc` light bg, `#e2e8f0` borders. Dark gradient for newsletter/CTA sections.
-
-#### 6. Footer Integration
-
-- `DEVELOPED_ROUTES` includes `/guides`
-- `isRouteDeveloped()` handles `/guides/*` prefix
-- "Guides" link added to the Support column
 
 ---
 
-### Reusable Components Created/Modified
-* **[HomeInvestmentSection.tsx](file:///d:/Sanket/GitSanket/PropertyBroker/src/components/HomeInvestmentSection.tsx)**: "Why Invest in Nagpur?" section — data-driven, responsive, dark premium theme.
-* **[PropertyDetailsPage.tsx](file:///d:/Sanket/GitSanket/PropertyBroker/src/pages/PropertyDetailsPage.tsx)**: Main composition page.
-* **[PropertyCard.tsx](file:///d:/Sanket/GitSanket/PropertyBroker/src/components/PropertyCard.tsx)**: Refactored with anchor wraps, separate z-index buttons, and whatsapp builders.
-* **[propertyEnricher.ts](file:///d:/Sanket/GitSanket/PropertyBroker/src/utils/propertyEnricher.ts)**: Shared database mapper.
-* **[parsePrice.ts](file:///d:/Sanket/GitSanket/PropertyBroker/src/utils/parsePrice.ts)**: Enhanced to match both abbreviated `L`/`lakh` and `Cr`/`crore` price tags.
-* **[propertyDetails.css](file:///d:/Sanket/GitSanket/PropertyBroker/src/styles/propertyDetails.css)**: Section layouts, sticky transitions, responsive rules, and skeletons.
+## 13. Search and Filtering
+
+### Filter Categories
+
+| # | Category | Type | Options Count |
+|---|----------|------|---------------|
+| 1 | Locality | Multi-select | 31 |
+| 2 | Property Type | Multi-select | 4 |
+| 3 | BHK | Multi-select | 4 |
+| 4 | Budget | Range slider | Min ₹5L – Max ₹5Cr |
+| 5 | Area | Range slider | Min 300 – Max 6,000 sqft |
+| 6 | Furnished | Multi-select | 3 |
+| 7 | Possession | Multi-select | 5 |
+| 8 | Availability | Multi-select | 2 |
+| 9 | Property Age | Multi-select | 5 |
+| 10 | Facing | Multi-select | 8 |
+| 11 | Ownership | Multi-select | 3 |
+| 12 | Parking | Multi-select | 3 |
+| 13 | Bathrooms | Multi-select | 4 |
+| 14 | Floor | Multi-select | 7 |
+
+### URL Synchronization
+
+- Locality filter syncs with URL query parameter: `/filter?locality=Manish%20Nagar`
+- Deep linking from home page locality cards and hero search
+- `useLocalityFilter()` hook manages URL state
+
+### Search Analytics
+
+- Tracked on mount and debounced on filter changes (800ms)
+- Events: locality, property type, BHK, budget range, area range, furnished, results count
+
+---
+
+## 14. Authentication
+
+**Status**: Not implemented.
+
+- Public routes only
+- No login/logout UI
+- No token storage
+- No permissions or role-based access control
+
+If authentication is added later, it will need to be introduced from scratch.
+
+---
+
+## 15. Admin Functionality
+
+**Status**: Not implemented.
+
+- No admin panel
+- No CMS integration
+- All data is hardcoded in TypeScript files
+- Adding/editing properties requires code changes
+
+---
+
+## 16. SEO Features
+
+### Client-Side SEO
+
+- Dynamic `<title>` tags per page
+- Meta description injection
+- Open Graph tags (og:title, og:description, og:image, og:url, og:type)
+- Twitter Card tags (twitter:card, twitter:title, twitter:description, twitter:image)
+- Canonical URL injection
+
+### Property Details SEO
+
+- Title: `<Property Title> | <Locality>, Nagpur | PropertyBroker`
+- Description: Property description text
+- Image: Primary property image
+- URL: Canonical URL set to current page URL
+
+### Infrastructure
+
+- `vercel.json` — SPA rewrite rules for Vercel
+- `public/_redirects` — SPA redirect rules for Netlify
+- All routes work on page refresh and direct URL access
+
+---
+
+## 17. Analytics and Tracking
+
+### Architecture
+
+| File | Purpose |
+|------|---------|
+| `src/types/analytics.ts` | TypeScript interfaces for event parameters |
+| `src/utils/analytics.ts` | Centralized tracking functions (Meta Pixel + GA4) |
+| `src/utils/contact.ts` | WhatsApp/Phone helpers with tracking |
+| `src/components/MetaPixel.tsx` | Meta Pixel initialization + route-based PageView |
+
+### Tracked Events
+
+| Event | Function | Where Fired |
+|-------|----------|-------------|
+| **PageView** | `trackPageView()` | `MetaPixel.tsx` — every route change |
+| **Search** | `trackSearch()` | `FilterPage.tsx` — mount + debounced filter changes (800ms) |
+| **ViewContent** | `trackViewContent()` | `PropertyDetailsPage.tsx` — on property load |
+| **Contact** | `trackContact()` | `contact.ts` — called by `openWhatsApp()` and `makePhoneCall()` |
+| **Lead** | `trackLead()` | `contact.ts` — called by `openWhatsApp()` and `makePhoneCall()` |
+
+### Meta Pixel ID
+
+`1849098536468259`
+
+### Contact Sources
+
+| Source | Where |
+|--------|-------|
+| `navbar` | Navbar phone button |
+| `whatsapp_float` | Floating WhatsApp button |
+| `property_card` | Property card WhatsApp button |
+| `property_details` | Property detail page CTA |
+| `footer` | Footer links |
+| `hero` | Hero section |
+| `filter_page` | Filter page |
+| `guides` | Guides section |
+
+### Future Provider Support
+
+To add GA4 or GTM, add tracking calls inside `src/utils/analytics.ts`. Each function already supports multiple providers via the `getFbq()` pattern. Add `window.gtag` calls alongside `fbq` calls. Component code stays untouched.
+
+---
+
+## 18. Responsive Design
+
+### Breakpoints
+
+| Breakpoint | Target | Layout |
+|------------|--------|--------|
+| > 1024px | Desktop | Multi-column grids, sidebar visible |
+| 768px – 1024px | Tablet | Adjusted grids, collapsible elements |
+| 480px – 768px | Mobile | Single column, stacked layout |
+| < 480px | Small Mobile | Compact layout, full-width buttons |
+
+### Responsive Files
+
+| File | Breakpoints |
+|------|-------------|
+| `src/styles/homeResponsive.css` | 1024px, 768px, 640px, 480px |
+| `src/styles/propertyDetails.css` | 1024px, 768px, 480px, 360px |
+| `src/styles/guides.css` | 1024px, 768px, 640px, 480px |
+| `src/styles/filterPage.css` | 1024px, 768px, 640px, 480px |
+| `src/styles/navbar.css` | 768px, 480px |
+| `src/styles/footer.css` | 768px, 480px |
+
+### Key Responsive Behaviors
+
+- **Home**: Carousel scrolls horizontally, stats grid adjusts columns, investment section stacks
+- **Filter**: Sidebar becomes drawer on mobile, grid adjusts columns
+- **Property Details**: Gallery stacks vertically, CTA becomes sticky bottom bar, specs grid single column
+- **Guides**: TOC becomes collapsible, grid adjusts columns, newsletter stacks vertically
+
+---
+
+## 19. Project Structure
+
+```
+PropertyBroker/
+├── public/
+│   ├── favicon.svg
+│   ├── icons.svg
+│   └── _redirects              ← Netlify SPA rules
+├── src/
+│   ├── App.tsx                 ← Router + layout
+│   ├── main.tsx                ← Entry point
+│   ├── index.css               ← Global styles
+│   ├── baseComponents/         ← Shared UI (Badge, Button, etc.)
+│   ├── components/             ← Feature components (24 files)
+│   ├── data/                   ← Static data (4 files)
+│   ├── hooks/                  ← Custom hooks (2 files)
+│   ├── pages/                  ← Route pages (6 files)
+│   ├── styles/                 ← CSS files (8 files)
+│   ├── types/                  ← TypeScript interfaces (2 files)
+│   └── utils/                  ← Utilities (5 files)
+├── vercel.json                 ← Vercel SPA rules
+├── index.html                  ← HTML entry
+├── package.json                ← Dependencies
+├── tsconfig.json               ← TypeScript config
+├── vite.config.ts              ← Vite config
+└── eslint.config.js            ← ESLint config
+```
+
+### Routes
+
+| Path | Component | Loading |
+|------|-----------|---------|
+| `/` | `Home` | Eager |
+| `/filter` | `FilterPage` | Eager |
+| `/property/:slug` | `PropertyDetailsPage` | Eager |
+| `/guides` | `GuidesPage` | Lazy |
+| `/guides/:slug` | `GuideDetailPage` | Lazy |
+| `/privacy-policy` | `Privacy` | Eager |
+
+### Global Components
+
+Rendered on every page via `App.tsx`:
+
+| Component | Purpose |
+|-----------|---------|
+| `MetaPixel` | Facebook Pixel initialization + route tracking |
+| `ScrollToTop` | Scroll restoration on route change |
+| `Navbar` | Navigation bar with logo, links, phone CTA |
+| `Footer` | Site footer with links |
+| `WhatsAppFloat` | Floating WhatsApp button |
+
+---
+
+## 20. Development Guidelines
+
+### Coding Conventions
+
+- **Files**: PascalCase for components (e.g., `HeroSection.tsx`), camelCase for utilities
+- **Exports**: Default exports for components
+- **Styling**: Mix of CSS files (`src/styles/`) and inline styles
+- **Types**: All interfaces in `src/types/types.ts` and `src/types/analytics.ts`
+- **Data**: Static arrays in `src/data/`, transformed by enricher at runtime
+
+### Color Palette
+
+| Color | Usage |
+|-------|-------|
+| `#1a3c5e` | Primary dark navy (headings, text) |
+| `#2563eb` | Primary blue (buttons, links, accents) |
+| `#60a5fa` | Accent blue (highlights, icons) |
+| `#f8fafc` | Light section backgrounds |
+| `#ffffff` | White surfaces |
+| `#64748b` / `#94a3b8` | Secondary text |
+| `#10b981` | Success/green badge |
+| `#25D366` | WhatsApp green |
+| `#f59e0b` | Amber badge |
+| `#8b5cf6` | Purple badge |
+
+### Typography
+
+- **Headings**: Playfair Display (serif)
+- **Body**: DM Sans (sans-serif)
+- Both loaded from Google Fonts in `index.html`
+
+### Adding a New Feature
+
+1. Search for existing similar components
+2. Decide placement: `src/components/`, `src/pages/`, `src/hooks/`, or `src/data/`
+3. Add/update content data if shared
+4. Implement the UI
+5. If it's a page, add a route in `App.tsx`
+6. Add styles to `src/styles/` or use inline styles
+7. Add types to `src/types/types.ts`
+8. Verify in browser and build
+
+### Adding a New Page
+
+1. Create file in `src/pages/` with PascalCase name
+2. Export default function component
+3. Import in `App.tsx` and add `<Route>`
+4. If lazy-loaded, use `React.lazy()` with `Suspense`
+
+### Things to Never Do
+
+- Don't introduce a state management library unless truly needed
+- Don't add a new styling system (keep CSS files + inline styles)
+- Don't hard-code content that belongs in `src/data/`
+- Don't create duplicate components when similar ones exist
+- Don't add pages without wiring into `App.tsx`
+- Don't bypass component structure by putting UI in `App.tsx`
+
+### Commands
+
+```bash
+npm install          # Install dependencies
+npm run dev          # Start dev server
+npm run build        # Production build (tsc + vite)
+npm run lint         # Run ESLint
+npm run preview      # Preview production build
+```
+
+---
+
+## 21. Future Roadmap
+
+### Phase 1: Real Data
+
+- [ ] Replace placeholder Unsplash images with real property photos
+- [ ] Update property data with actual Nagpur listings
+- [ ] Add real guide content
+
+### Phase 2: Backend
+
+- [ ] REST API for properties
+- [ ] Admin panel for CRUD operations
+- [ ] User authentication
+- [ ] Saved searches and favorites
+
+### Phase 3: Enhanced Features
+
+- [ ] Property comparison tool
+- [ ] Mortgage calculator
+- [ ] Virtual tours / 3D walkthroughs
+- [ ] Multi-language support (Hindi, Marathi)
+- [ ] Email notifications for new listings
+
+### Phase 4: Business
+
+- [ ] Agent/broker portal
+- [ ] Lead management system
+- [ ] Payment integration
+- [ ] RERA verification API integration
+
+---
+
+## 22. Known Limitations
+
+1. **Static Data**: All properties and guides are hardcoded — no CMS or admin panel
+2. **No Authentication**: No user accounts, saved searches, or favorites
+3. **No Backend**: No API, database, or server-side logic
+4. **Form Submission**: Contact form is cosmetic (EmailJS legacy, not actively used)
+5. **No Real-time Data**: Property availability and pricing may be outdated
+6. **SEO Limitations**: Client-side SEO only — no server-side rendering for search engines
+7. **No A/B Testing**: No experimentation framework
+8. **No Error Boundaries**: No global error boundary or fallback UI
+9. **Image Management**: Images are URLs in code — no image upload or management system
+
+---
+
+## Appendix A: Environment Variables
+
+| Variable | Purpose |
+|----------|---------|
+| `VITE_EMAILJS_SERVICE_ID` | EmailJS service ID (legacy) |
+| `VITE_EMAILJS_TEMPLATE_ID` | EmailJS template ID (legacy) |
+| `VITE_EMAILJS_PUBLIC_KEY` | EmailJS public key (legacy) |
+
+---
+
+## Appendix B: Hosting Configuration
+
+### Vercel (`vercel.json`)
+
+```json
+{
+  "rewrites": [
+    {
+      "source": "/((?!assets/|favicon\\.svg|icons\\.svg|robots\\.txt|sitemap\\.xml|manifest\\.json|.*\\..*).*)",
+      "destination": "/index.html"
+    }
+  ]
+}
+```
+
+### Netlify (`public/_redirects`)
+
+```
+/*    /index.html   200
+```
+
+Both configurations serve `index.html` for all non-static routes, allowing React Router to handle client-side routing.
+
+---
+
+## Appendix C: Property Enricher
+
+The `propertyEnricher.ts` utility transforms raw property data into fully enriched Property objects:
+
+| Input Field | Generated Output |
+|-------------|------------------|
+| `title` + `id` | `slug` (URL-friendly) |
+| `type` | `propertyType` (copy) |
+| `bhk` | `bedrooms` (parsed number) |
+| `furnished` | `furnishing` (copy) |
+| `location` | `city`, `address` (parsed) |
+| `floor` | `totalFloors` (calculated) |
+| `image` | `thumbnail` (copy) |
+| (center) | `coordinates` (Nagpur center + offset) |
+
+---
+
+*Last updated: July 2026*

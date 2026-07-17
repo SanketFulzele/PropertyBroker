@@ -10,11 +10,12 @@ This document explains exactly how data flows through the PropertyBroker website
 2. [Data Files Map](#data-files-map)
 3. [Property Data Structure](#property-data-structure)
 4. [How the Enricher Works](#how-the-enricher-works)
-5. [Adding Real Properties — Exact Format](#adding-real-properties--exact-format)
+5. [Adding Real Properties](#adding-real-properties)
 6. [Image System](#image-system)
 7. [Guide Data Structure](#guide-data-structure)
 8. [Other Data Files](#other-data-files)
-9. [Full Example — Adding a Real Property](#full-example--adding-a-real-property)
+9. [Filter System](#filter-system)
+10. [Key Rules](#key-rules)
 
 ---
 
@@ -22,13 +23,13 @@ This document explains exactly how data flows through the PropertyBroker website
 
 PropertyBroker is a React + TypeScript SPA for real estate in Nagpur, India. It uses:
 
-- **React 18** with React Router (client-side routing)
-- **Vite** as build tool
+- **React 19** with React Router v7 (client-side routing)
+- **Vite 8** as build tool
 - **Inline styles + CSS files** for styling (no Tailwind, no CSS-in-JS libraries)
-- **Static data** (hardcoded arrays) — no backend API yet
-- **Unsplash URLs** as placeholder images
+- **Static data** (hardcoded TypeScript arrays) — no backend API
+- **Property enricher** that transforms raw data into full Property objects at runtime
 
-All data is stored in TypeScript files under `src/data/`. At runtime, raw data gets transformed by `src/utils/propertyEnricher.ts` which auto-generates missing fields like `slug`, `bedrooms`, `images` gallery, `coordinates`, etc.
+All data is stored in TypeScript files under `src/data/`. At runtime, raw data gets transformed by `src/utils/propertyEnricher.ts` which auto-generates missing fields like `slug`, `bedrooms`, `city`, `totalFloors`, `coordinates`, etc.
 
 ---
 
@@ -38,66 +39,80 @@ All data is stored in TypeScript files under `src/data/`. At runtime, raw data g
 src/
 ├── data/
 │   ├── data.ts                    ← Featured properties (carousel), stats, localities
-│   ├── filterProperties.ts        ← All searchable/filterable properties (~25)
-│   ├── nagpurLocalities.ts        ← Locality names for search dropdowns
-│   └── guidesData.ts              ← Guide articles, categories, FAQs, resources
+│   ├── filterProperties.ts        ← All searchable/filterable properties (25 items)
+│   ├── nagpurLocalities.ts        ← 31 Nagpur locality names for filter dropdowns
+│   └── guidesData.ts              ← Guide articles, categories, FAQs, resources, topics
 ├── types/
-│   └── types.ts                   ← All TypeScript interfaces
+│   ├── types.ts                   ← All TypeScript interfaces (Property, Stat, Locality, Guide*)
+│   └── analytics.ts               ← Analytics event parameter interfaces
 ├── utils/
 │   ├── propertyEnricher.ts        ← Transforms raw data → full Property objects
 │   ├── parsePrice.ts              ← Parses "₹62 L" or "₹1.2 Cr" → number
-│   ├── analytics.ts               ← Meta Pixel / GA4 tracking
-│   └── contact.ts                 ← WhatsApp + phone call helpers
-└── components/
-    ├── PropertyCard.tsx            ← Card component used everywhere
-    ├── PropertyCarousel.tsx        ← Home page carousel (uses data.ts)
-    ├── HeroSection.tsx             ← Home page hero
-    ├── Navbar.tsx                  ← Navigation bar
-    └── Footer.tsx                  ← Footer
+│   ├── analytics.ts               ← Meta Pixel + GA4 tracking functions
+│   ├── contact.ts                 ← WhatsApp + phone call helpers with tracking
+│   └── usePropertyFilters.ts      ← Client-side property filtering logic (13 filter categories)
+├── hooks/
+│   ├── hooks.ts                   ← useIntersectionObserver, useCountUp
+│   └── useUrlFilters.ts           ← useLocalityFilter (URL query param sync)
+├── baseComponents/                ← Shared reusable UI components
+│   ├── index.ts                   ← Barrel export
+│   ├── Badge.tsx                  ← Status/tag badges
+│   ├── Button.tsx                 ← Primary/outline/ghost buttons
+│   ├── CheckboxGroup.tsx          ← Multi-select checkbox groups
+│   ├── EmptyState.tsx             ← Empty state placeholder
+│   ├── FeatureCard.tsx            ← Feature display card
+│   ├── Logo.tsx                   ← PropertyBroker logo
+│   ├── RangeSlider.tsx            ← Dual-handle range slider
+│   ├── SearchableMultiSelect.tsx  ← Searchable dropdown multi-select
+│   ├── SectionHeader.tsx          ← Section title + subtitle
+│   └── SectionWrapper.tsx         ← Animated section wrapper
+├── components/                    ← Feature-specific UI components (24 files)
+├── pages/                         ← Route-level page components (6 files)
+└── styles/                        ← CSS files (8 files)
 ```
 
 ---
 
 ## Property Data Structure
 
-### TypeScript Interface (src/types/types.ts)
+### TypeScript Interface (`src/types/types.ts`)
 
 ```typescript
 export interface Property {
-  id: number;                    // Unique integer (1, 2, 3... or 101, 102...)
-  slug: string;                  // AUTO-GENERATED by enricher: "vrindavan-heights-1"
-  title: string;                 // Property name: "Vrindavan Heights"
-  description: string;           // 1-2 sentence description
-  price: string;                 // Formatted: "₹62 L" or "₹1.2 Cr"
-  pricePerSqft: string;          // Formatted: "₹5,800/sqft"
-  type: string;                  // "Apartment" | "Villa" | "Plot" | "Commercial"
-  propertyType: string;          // Same as type (auto-copied by enricher)
-  bhk: string;                   // "2 BHK" | "3 BHK" | "4 BHK"
+  id: number;
+  slug: string;                  // AUTO-GENERATED: "vrindavan-heights-1"
+  title: string;
+  description: string;
+  price: string;                 // "₹62 L" or "₹1.2 Cr"
+  pricePerSqft: string;          // "₹5,800/sqft"
+  type: string;                  // "Apartment" | "Villa" | "Plot" | "Commercial" | "Penthouse"
+  propertyType: string;          // AUTO-GENERATED: copied from type
+  bhk: string;                   // "2 BHK" | "3 BHK" | "" (empty for plots)
   bedrooms: number;              // AUTO-GENERATED from bhk: "2 BHK" → 2
-  bathrooms: number;             // You provide, defaults to bedrooms - 1
+  bathrooms: number;
   area: string;                  // "1,070 sqft"
   locality: string;              // "Manish Nagar" (no city)
   city: string;                  // AUTO-GENERATED: "Nagpur"
   address: string;               // AUTO-GENERATED from location
   location: string;              // Full: "Manish Nagar, Nagpur"
   furnished: string;             // "Unfurnished" | "Semi Furnished" | "Furnished"
-  furnishing: string;            // Same as furnished (auto-copied)
+  furnishing: string;            // AUTO-GENERATED: copied from furnished
   parking: string;               // "Covered" | "Open" | "None"
-  propertyAge: string;           // "New Construction" | "1-5 Years" | "5-10 Years"
+  propertyAge: string;           // "New Construction" | "1-5 Years" | etc.
   availability: string;          // "Ready to Move" | "Under Construction"
-  facing: string;                // "North" | "South" | "East" | "West"
-  ownership: string;             // "Freehold" | "Leasehold"
-  floor: string;                 // "3rd Floor" | "Ground Floor"
-  totalFloors: number;           // AUTO-GENERATED: floor + 4 minimum
-  amenities: string[];           // ["Pool", "Gym", "Garden", "Parking"]
+  facing: string;                // "North" | "South" | "East" | "West" | etc.
+  ownership: string;             // "Freehold" | "Leasehold" | "Co-operative Society"
+  floor: string;                 // "3rd Floor" | "Ground Floor" | "Top Floor"
+  totalFloors: number;           // AUTO-GENERATED: floor number + 4 minimum, or 10
+  amenities: string[];
   image: string;                 // Primary image URL (REQUIRED)
-  images: string[];              // AUTO-GENERATED gallery (6 images)
-  thumbnail: string;             // Same as image (auto-copied)
-  possession: string;            // "Immediate" | "Within 6 Months" | "2025"
+  images: string[];              // Gallery images — PROVIDED in raw data
+  thumbnail: string;             // AUTO-GENERATED: same as image
+  possession: string;            // "Immediate" | "Within 6 Months" | etc.
   coordinates: { lat: number; lng: number };  // AUTO-GENERATED around Nagpur
-  builder: string;               // Builder name
-  badge: string;                 // "RERA Verified" | "New Launch" | "Featured" | "Best Seller"
-  badgeColor: string;            // Hex color: "#10b981" | "#f59e0b" | "#8b5cf6" | "#2563eb"
+  builder: string;
+  badge: string;                 // "RERA Verified" | "New Launch" | "Featured" | etc.
+  badgeColor: string;            // Hex color
 }
 ```
 
@@ -105,14 +120,14 @@ export interface Property {
 
 | Field | Type | Example | Notes |
 |-------|------|---------|-------|
-| `id` | number | `1` | Unique per property. Featured: 1-8, Filter: 101+ |
+| `id` | number | `1` | Unique per property. Featured: 1–6, Filter: 101–125 |
 | `title` | string | `"Vrindavan Heights"` | Property/project name |
 | `location` | string | `"Manish Nagar, Nagpur"` | Full address string |
 | `locality` | string | `"Manish Nagar"` | Just the locality name |
 | `price` | string | `"₹62 L"` or `"₹1.2 Cr"` | L = lakh, Cr = crore |
 | `pricePerSqft` | string | `"₹5,800/sqft"` | Price per square foot |
 | `type` | string | `"Apartment"` | Property type |
-| `bhk` | string | `"2 BHK"` | Bedroom configuration |
+| `bhk` | string | `"2 BHK"` or `""` | Empty string for plots |
 | `area` | string | `"1,070 sqft"` | Built-up area |
 | `amenities` | string[] | `["Pool", "Gym"]` | List of amenities |
 | `builder` | string | `"Vrindavan Constructions"` | Builder/developer name |
@@ -120,7 +135,7 @@ export interface Property {
 | `availability` | string | `"Ready to Move"` | Availability status |
 | `possession` | string | `"Immediate"` | Possession timeline |
 | `parking` | string | `"Covered"` | Parking type |
-| `description` | string | `"Spacious 2 BHK..."` | 1-2 sentences |
+| `description` | string | `"Spacious 2 BHK..."` | 1–2 sentences |
 | `propertyAge` | string | `"New Construction"` | Age of property |
 | `facing` | string | `"East"` | Direction facing |
 | `ownership` | string | `"Freehold"` | Ownership type |
@@ -129,6 +144,7 @@ export interface Property {
 | `badge` | string | `"RERA Verified"` | Badge text |
 | `badgeColor` | string | `"#10b981"` | Badge background color |
 | `image` | string | `"https://..."` | **Primary image URL (REQUIRED)** |
+| `images` | string[] | `["https://...", ...]` | **5 gallery image URLs** |
 
 ### Fields Auto-Generated by Enricher
 
@@ -136,12 +152,12 @@ export interface Property {
 |-------|-------------------|
 | `slug` | `slugify(title) + "-" + id` → `"vrindavan-heights-1"` |
 | `propertyType` | Copied from `type` |
-| `bedrooms` | Parsed from `bhk`: `"2 BHK"` → `2` |
+| `bedrooms` | Parsed from `bhk`: `"2 BHK"` → `2` (defaults to 2 if empty) |
 | `furnishing` | Copied from `furnished` |
 | `city` | Extracted from `location`: `"Manish Nagar, Nagpur"` → `"Nagpur"` |
 | `address` | Same as `location` |
-| `totalFloors` | `floor + 4` minimum, or 10 |
-| `images` | Primary image + 5 from gallery pool (shuffled by ID) |
+| `totalFloors` | `floor number + 4` minimum, or 10 |
+| `images` | Uses `raw.images` if provided; otherwise generates from gallery pool |
 | `thumbnail` | Same as `image` |
 | `coordinates` | Generated around Nagpur center (21.1458, 79.0882) with ID-based offset |
 
@@ -152,12 +168,14 @@ export interface Property {
 File: `src/utils/propertyEnricher.ts`
 
 ```
-RAW_DATA (your input)
+RAW_DATA (your input with images array)
     ↓
 enrichProperty(raw)
     ↓
 Generates: slug, bedrooms, city, address, totalFloors,
-           images gallery, coordinates, furnishing, propertyType
+           coordinates, furnishing, propertyType, thumbnail
+    ↓
+Uses raw.images directly (or falls back to gallery pool)
     ↓
 FULL Property object (used by all components)
 ```
@@ -166,10 +184,11 @@ FULL Property object (used by all components)
 
 1. **Slug generation**: `title.toLowerCase().replace(/\s+/g, "-") + "-" + id`
 2. **Bedrooms**: Regex extracts number from BHK string: `"3 BHK"` → `3`
-3. **Gallery images**: Takes primary image + 5 images from `GALLERY_IMAGE_POOL` (shuffled by ID for consistency)
+3. **Gallery images**: Uses `raw.images` array if provided. Falls back to primary image + 5 from `GALLERY_IMAGE_POOL` (shuffled by ID for consistency)
 4. **Coordinates**: Centered on Nagpur (21.1458°N, 79.0882°E) with small offset based on ID
+5. **totalFloors**: Parses floor number, adds 4 minimum
 
-### Gallery Image Pool (current placeholder URLs):
+### Gallery Image Pool (fallback only):
 
 ```typescript
 const GALLERY_IMAGE_POOL = [
@@ -188,9 +207,26 @@ const GALLERY_IMAGE_POOL = [
 
 ---
 
-## Adding Real Properties — Exact Format
+## Adding Real Properties
 
-### File: `src/data/data.ts` (Featured/Carousel Properties)
+### Image Format
+
+Every property needs 5 gallery images (including the main image as the first one):
+
+```typescript
+{
+  image: "https://cdn.com/main.jpg",        // Primary display image
+  images: [
+    "https://cdn.com/main.jpg",             // Same as primary (shown first)
+    "https://cdn.com/living-room.jpg",       // Additional gallery images
+    "https://cdn.com/bedroom.jpg",
+    "https://cdn.com/kitchen.jpg",
+    "https://cdn.com/balcony.jpg",
+  ],
+}
+```
+
+### File: `src/data/data.ts` (Featured/Carousel Properties — 6 items)
 
 ```typescript
 const RAW_PROPERTIES = [
@@ -206,109 +242,54 @@ const RAW_PROPERTIES = [
     area: "1,250 sqft",
     badge: "RERA Verified",
     badgeColor: "#10b981",
-    image: "https://your-cdn.com/sunshine-main.jpg",
+    image: "https://cdn.com/sunshine-main.jpg",
+    images: [
+      "https://cdn.com/sunshine-main.jpg",
+      "https://cdn.com/living-room.jpg",
+      "https://cdn.com/bedroom.jpg",
+      "https://cdn.com/kitchen.jpg",
+      "https://cdn.com/balcony.jpg",
+    ],
     amenities: ["Gym", "Pool", "Garden", "Parking", "Security", "Clubhouse"],
     builder: "Sunshine Builders",
     furnished: "Semi Furnished",
     availability: "Ready to Move",
     possession: "Immediate",
     parking: "Covered",
-    description: "Premium 3 BHK apartment in Dharampeth with panoramic city views and modern amenities.",
+    description: "Premium 3 BHK apartment in Dharampeth with panoramic city views.",
     propertyAge: "New Construction",
     facing: "East",
     ownership: "Freehold",
     bathrooms: 3,
     floor: "5th Floor",
   },
-  // Add more properties here...
+  // ... more properties (IDs 1–6)
 ];
 ```
 
-### File: `src/data/filterProperties.ts` (Search/Filter Page Properties)
+### File: `src/data/filterProperties.ts` (Search/Filter Page — 25 items)
 
-Same format as above. Use IDs starting from 101. This file can have 20-30+ properties.
-
-```typescript
-const RAW_FILTER_PROPERTIES = [
-  {
-    id: 101,
-    title: "Green Valley Apartments",
-    location: "Manish Nagar, Nagpur",
-    locality: "Manish Nagar",
-    price: "₹55 L",
-    pricePerSqft: "₹5,500/sqft",
-    type: "Apartment",
-    bhk: "2 BHK",
-    area: "1,000 sqft",
-    badge: "Best Seller",
-    badgeColor: "#2563eb",
-    image: "https://your-cdn.com/green-valley-main.jpg",
-    amenities: ["Gym", "Garden", "Parking", "Security"],
-    builder: "Green Valley Infra",
-    furnished: "Unfurnished",
-    availability: "Under Construction",
-    possession: "Within 6 Months",
-    parking: "Covered",
-    description: "Affordable 2 BHK in Manish Nagar with excellent connectivity.",
-    propertyAge: "New Construction",
-    facing: "North",
-    ownership: "Freehold",
-    bathrooms: 2,
-    floor: "3rd Floor",
-  },
-  // ... more properties
-];
-```
+Same format. Use IDs starting from 101.
 
 ---
 
 ## Image System
 
-### Primary Image (Required)
+### Primary Image + Gallery
 
-Every property MUST have an `image` field with a valid URL. This is used for:
-- Property cards on home page
-- Property cards on filter page
-- Main image on property detail page
-- Open Graph social sharing meta tags
+Every property has:
+- `image` — single URL used for cards, OG tags, and as the first gallery image
+- `images` — array of 5 URLs used for the property detail page gallery
 
-### Gallery Images (Auto-Generated)
+### How Images Are Used
 
-The enricher auto-generates a 6-image gallery:
-1. Your primary `image`
-2. +5 images from `GALLERY_IMAGE_POOL` (shuffled by property ID)
-
-### To Use Real Gallery Images
-
-**Option 1: Add `images` array to raw data**
-
-```typescript
-{
-  id: 1,
-  title: "Sunshine Towers",
-  image: "https://cdn.com/main.jpg",
-  images: [
-    "https://cdn.com/main.jpg",
-    "https://cdn.com/living-room.jpg",
-    "https://cdn.com/bedroom.jpg",
-    "https://cdn.com/kitchen.jpg",
-    "https://cdn.com/balcony.jpg",
-    "https://cdn.com/exterior.jpg",
-  ],
-  // ... other fields
-}
-```
-
-Then modify `propertyEnricher.ts`:
-
-```typescript
-// In enrichProperty function, replace the gallery generation with:
-const images = raw.images || [primaryImage, ...additionalImages];
-```
-
-**Option 2: Replace GALLERY_IMAGE_POOL**
-
-Replace the Unsplash URLs in `propertyEnricher.ts` with your CDN URLs. The enricher will pick 5 from this pool for each property.
+| Context | Source |
+|---------|--------|
+| Property cards (home, filter) | `prop.image` |
+| Property detail page main gallery | `property.images[0]` (hero) |
+| Property detail page thumbnails | `property.images[0–4]` |
+| OG/social sharing meta tags | `property.image` |
+| WhatsApp messages | `property.image` (not included in message) |
 
 ### Image CDN Recommendations
 
@@ -320,24 +301,21 @@ Replace the Unsplash URLs in `propertyEnricher.ts` with your CDN URLs. The enric
 | **ImgBB** | Unlimited (with API key) | Quick testing |
 | **Vercel Blob** | 1GB storage | Vercel-deployed sites |
 
-### Image URL Format
-
-```
-# Cloudinary example:
-https://res.cloudinary.com/your-cloud/image/upload/w_800,q_80/properties/sunshine-main.jpg
-
-# Firebase example:
-https://firebasestorage.googleapis.com/v0/b/your-project/o/properties%2Fsunshine-main.jpg
-
-# Local (for development):
-/images/properties/sunshine-main.jpg
-```
-
 ---
 
 ## Guide Data Structure
 
 ### File: `src/data/guidesData.ts`
+
+### Exports
+
+| Export | Type | Count |
+|--------|------|-------|
+| `GUIDE_CATEGORIES` | `GuideCategory[]` | 6 |
+| `GUIDE_ARTICLES` | `GuideArticle[]` | 12 |
+| `POPULAR_TOPICS` | `string[]` | 12 |
+| `DOWNLOADABLE_RESOURCES` | `DownloadableResource[]` | 4 |
+| `GUIDES_FAQS` | `FAQ[]` | 6 |
 
 ### GuideCategory
 
@@ -365,7 +343,7 @@ https://firebasestorage.googleapis.com/v0/b/your-project/o/properties%2Fsunshine
   excerpt: "Short preview text for cards...",
   readingTime: "8 min read",
   publishDate: "Jan 15, 2025",
-  coverImage: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&q=80",
+  coverImage: "https://images.unsplash.com/...",
   author: "PropertyBroker Team",
   tags: ["buying", "first-time buyer", "home loan", "legal"],
   featured: true,
@@ -410,118 +388,112 @@ https://firebasestorage.googleapis.com/v0/b/your-project/o/properties%2Fsunshine
 ### `src/data/nagpurLocalities.ts`
 
 ```typescript
-export const NAGPUR_LOCALITIES = [
+export const NAGPUR_LOCALITY_NAMES = [
   "Manish Nagar",
   "Besa",
+  "Beltarodi",
+  "MIHAN",
+  "Wardha Road",
   "Dharampeth",
-  "Wardhaman Nagar",
-  "Sadar",
   "Civil Lines",
+  "Pratap Nagar",
+  "Narendra Nagar",
+  "Trimurti Nagar",
+  "Jaripatka",
+  "Hingna Road",
+  "Sadar",
   "Ramdaspeth",
-  "Abhyankar Nagar",
-  // ... add more localities
-];
+  "Shankar Nagar",
+  "Sonegaon",
+  "Nandanvan",
+  "Khaparkheda",
+  "Mohagaon",
+  "Ambazari",
+  "Lakadganj",
+  "Ganeshpeth",
+  "Itwari",
+  "Sitabuldi",
+  "Mahal",
+  "Sakkardara",
+  "Ayodhya Nagar",
+  "Wathoda",
+  "Kalamna",
+  "Kotambi",
+] as const;
 
-export const NAGPUR_LOCALITY_NAMES = NAGPUR_LOCALITIES.map(l => l.name);
+export type NagpurLocality = (typeof NAGPUR_LOCALITY_NAMES)[number];
+
+export const LOCALITY_OPTIONS = NAGPUR_LOCALITY_NAMES.map((name) => ({
+  value: name,
+  label: name,
+}));
 ```
 
 ### `src/data/data.ts` — Stats
 
 ```typescript
 export const STATS: Stat[] = [
-  { value: "2500", label: "Verified Properties" },
-  { value: "12000", label: "Happy Families" },
-  { value: "300", label: "Localities Covered" },
-  { value: "50", label: "Builders Associated" },
+  { value: "2,500+", label: "Active Listings" },
+  { value: "15+", label: "Localities Covered" },
+  { value: "12,000+", label: "Happy Families" },
+  { value: "₹450Cr+", label: "Properties Sold" },
+];
+```
+
+### `src/data/data.ts` — Localities (Home Page)
+
+```typescript
+export const NAGPUR_LOCALITIES: Locality[] = [
+  {
+    id: 1,
+    name: "Manish Nagar",
+    description: "Premium residential hub near the airport...",
+    propertyCount: "120+",
+    startingPrice: "₹42 L",
+    image: "https://images.unsplash.com/...",
+  },
+  // 8 localities total (Manish Nagar, Wardha Road, MIHAN, Beltarodi, Dharampeth, Pratap Nagar, Besa, Civil Lines)
 ];
 ```
 
 ---
 
-## Full Example — Adding a Real Property
+## Filter System
 
-### Step 1: Prepare images
+### Filter Categories (13 total)
 
-Upload to Cloudinary/Firebase:
-- Main image: `sunshine-towers-main.jpg` → `https://cdn.com/sunshine-main.jpg`
-- Gallery: 5 more images of the property
+The filter sidebar (`FilterSidebar.tsx`) supports these filter categories:
 
-### Step 2: Add to `data.ts`
+| Filter | Type | Options |
+|--------|------|---------|
+| Locality | Multi-select | 31 Nagpur localities |
+| Property Type | Multi-select | Apartment, Villa, Plot, Commercial |
+| BHK | Multi-select | 1 BHK, 2 BHK, 3 BHK, 4+ BHK |
+| Budget | Range slider | ₹5L – ₹5 Cr |
+| Area | Range slider | 300 – 6,000 sqft |
+| Furnished | Multi-select | Furnished, Semi Furnished, Unfurnished |
+| Possession | Multi-select | Immediate, Within 3 Months, Within 6 Months, Within 1 Year, After 1 Year |
+| Availability | Multi-select | Ready to Move, Under Construction |
+| Property Age | Multi-select | New Construction, 1-5 Years, 5-10 Years, 10-20 Years, 20+ Years |
+| Facing | Multi-select | North, South, East, West, North-East, North-West, South-East, South-West |
+| Ownership | Multi-select | Freehold, Leasehold, Co-operative Society |
+| Parking | Multi-select | Covered, Open, None |
+| Bathrooms | Multi-select | 1, 2, 3, 4 |
+| Floor | Multi-select | Ground Floor, 1st–5th Floor, 6th Floor+ |
 
-```typescript
-{
-  id: 1,
-  title: "Sunshine Towers",
-  location: "Dharampeth, Nagpur",
-  locality: "Dharampeth",
-  price: "₹85 L",
-  pricePerSqft: "₹6,200/sqft",
-  type: "Apartment",
-  bhk: "3 BHK",
-  area: "1,250 sqft",
-  badge: "RERA Verified",
-  badgeColor: "#10b981",
-  image: "https://cdn.com/sunshine-main.jpg",
-  amenities: ["Gym", "Pool", "Garden", "Parking", "Security", "Clubhouse", "Kids Play Area"],
-  builder: "Sunshine Builders Pvt Ltd",
-  furnished: "Semi Furnished",
-  availability: "Ready to Move",
-  possession: "Immediate",
-  parking: "Covered (2 Cars)",
-  description: "Premium 3 BHK apartment in the heart of Dharampeth with panoramic city views, modern amenities, and excellent connectivity to major landmarks.",
-  propertyAge: "New Construction",
-  facing: "East",
-  ownership: "Freehold",
-  bathrooms: 3,
-  floor: "5th Floor",
-}
-```
+### URL Sync
 
-### Step 3: Add to `filterProperties.ts` (same format, different ID)
+The `useLocalityFilter` hook syncs the locality filter with the URL query parameter:
+- `/filter?locality=Manish%20Nagar` — pre-filters by locality
+- Supports deep linking from home page locality cards and hero search
 
-```typescript
-{
-  id: 101,
-  // ... same fields as above
-}
-```
+### Filter Logic
 
-### Step 4: Run dev server
+File: `src/utils/usePropertyFilters.ts`
 
-```bash
-npm run dev
-```
-
-The property will automatically appear in:
-- Home page carousel
-- Filter/search page
-- Property detail page (when clicked)
-- WhatsApp messages will include correct property info
-
----
-
-## Badge Colors Reference
-
-| Badge Text | Color | Hex |
-|-----------|-------|-----|
-| RERA Verified | Green | `#10b981` |
-| New Launch | Amber | `#f59e0b` |
-| Featured | Purple | `#8b5cf6` |
-| Best Seller | Blue | `#2563eb` |
-
----
-
-## Price Format Reference
-
-| Price Range | Format | Example |
-|------------|--------|---------|
-| Under 1 Lakh | ₹XX,XXX | `₹95,000` |
-| 1 Lakh - 99 Lakh | ₹XX L | `₹62 L` |
-| 1 Crore+ | ₹X.X Cr | `₹1.2 Cr` |
-
-The `parsePrice.ts` utility handles both formats:
-- `₹62 L` → `6200000`
-- `₹1.2 Cr` → `12000000`
+- Client-side filtering (no API calls)
+- All 13 filter categories applied simultaneously
+- Returns `{ filters, setFilter, clearAll, filtered, hasActiveFilters, total, shown }`
 
 ---
 
@@ -534,3 +506,37 @@ The `parsePrice.ts` utility handles both formats:
 5. **Price format matters** — must include `₹` symbol and `L` or `Cr` suffix
 6. **Localities must match** `nagpurLocalities.ts` for search to work correctly
 7. **Badge colors must be valid hex** — components render them as background colors
+8. **Always provide `images` array** with 5 URLs for each property (first URL should match `image`)
+
+---
+
+## Badge Colors Reference
+
+| Badge Text | Color | Hex |
+|-----------|-------|-----|
+| RERA Verified | Green | `#10b981` |
+| New Launch | Amber | `#f59e0b` |
+| Featured | Purple | `#8b5cf6` |
+| Best Seller | Blue | `#2563eb` |
+| Ready to Move | Cyan | `#06b6d4` |
+| Affordable | Green | `#10b981` |
+| Budget Friendly | Green | `#10b981` |
+| Premium | Purple | `#8b5cf6` |
+| Ultra Premium | Purple | `#8b5cf6` |
+| Best Value | Blue | `#2563eb` |
+| Investment Pick | Amber | `#f59e0b` |
+
+---
+
+## Price Format Reference
+
+| Price Range | Format | Example | Parsed Value |
+|------------|--------|---------|--------------|
+| Under 1 Lakh | ₹XX,XXX | `₹95,000` | 95000 |
+| 1 Lakh – 99 Lakh | ₹XX L | `₹62 L` | 6200000 |
+| 1 Crore+ | ₹X.X Cr | `₹1.2 Cr` | 12000000 |
+
+The `parsePrice.ts` utility handles both formats:
+- `₹62 L` → `6200000`
+- `₹1.2 Cr` → `12000000`
+- `₹95,000` → `95000`
