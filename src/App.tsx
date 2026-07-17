@@ -31,7 +31,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/privacy-policy" element={<Privacy />} />
-        <Route path="/filter" element={<FilterPage />} />
+        <Route path="/property-list" element={<FilterPage />} />
         <Route path="/property/:slug" element={<PropertyDetailsPage />} />
         <Route
           path="/guides"
