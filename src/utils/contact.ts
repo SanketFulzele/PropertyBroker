@@ -25,7 +25,7 @@ export function openWhatsApp({
   source,
   propertyId,
 }: WhatsAppParams) {
-  trackContact({ method: "whatsapp", source, propertyId, propertyName });
+  // trackContact({ method: "whatsapp", source, propertyId, propertyName });
   trackLead({ method: "whatsapp", source });
 
   let text = message;
@@ -48,7 +48,7 @@ interface PhoneCallParams {
 
 export function makePhoneCall({ source, propertyId, propertyName }: PhoneCallParams) {
   trackContact({ method: "phone", source, propertyId, propertyName });
-  trackLead({ method: "phone", source });
+  // trackLead({ method: "phone", source });
 
   window.location.href = `tel:+91${PHONE_DISPLAY}`;
 }
