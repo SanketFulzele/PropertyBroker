@@ -14,7 +14,7 @@ export default function GuidesCTA() {
           Browse verified listings across Nagpur's best localities or talk to our property experts for personalized guidance.
         </p>
         <div className="guides-cta-buttons">
-          <button className="guides-cta-btn-primary" onClick={() => navigate("/filter")}>
+          <button className="guides-cta-btn-primary" onClick={() => navigate("/property-list")}>
             Browse Properties
           </button>
           <button className="guides-cta-btn-outline" onClick={() => openWhatsApp({ source: "guides" })}>

@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { Logo } from "../baseComponents";
 import "../styles/footer.css";
 
-const DEVELOPED_ROUTES = ["/", "/filter", "/privacy-policy", "/guides"];
+const DEVELOPED_ROUTES = ["/", "/property-list", "/privacy-policy", "/guides"];
 
 export default function Footer() {
   const year = new Date().getFullYear();

@@ -81,7 +81,7 @@ export default function CTASection() {
           }}
         >
           <button
-            onClick={() => navigate("/filter")}
+            onClick={() => navigate("/property-list")}
             style={{
               padding: "16px 36px",
               borderRadius: 12,

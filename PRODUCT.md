@@ -149,7 +149,7 @@ To become Nagpur's most trusted digital real estate platform by providing transp
 
 ### Journey 2: Filtered Search
 
-1. User navigates to `/filter` (from hero search, locality cards, or navbar)
+1. User navigates to `/property-list` (from hero search, locality cards, or navbar)
 2. Applies filters (locality, type, BHK, budget, etc.)
 3. Browses filtered property grid
 4. Clicks property card → opens in new tab
@@ -418,7 +418,7 @@ Components consume enriched data
 
 ### URL Synchronization
 
-- Locality filter syncs with URL query parameter: `/filter?locality=Manish%20Nagar`
+- Locality filter syncs with URL query parameter: `/property-list?locality=Manish%20Nagar`
 - Deep linking from home page locality cards and hero search
 - `useLocalityFilter()` hook manages URL state
 
@@ -586,7 +586,7 @@ PropertyBroker/
 | Path | Component | Loading |
 |------|-----------|---------|
 | `/` | `Home` | Eager |
-| `/filter` | `FilterPage` | Eager |
+| `/property-list` | `FilterPage` | Eager |
 | `/property/:slug` | `PropertyDetailsPage` | Eager |
 | `/guides` | `GuidesPage` | Lazy |
 | `/guides/:slug` | `GuideDetailPage` | Lazy |

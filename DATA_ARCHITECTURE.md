@@ -484,7 +484,7 @@ The filter sidebar (`FilterSidebar.tsx`) supports these filter categories:
 ### URL Sync
 
 The `useLocalityFilter` hook syncs the locality filter with the URL query parameter:
-- `/filter?locality=Manish%20Nagar` — pre-filters by locality
+- `/property-list?locality=Manish%20Nagar` — pre-filters by locality
 - Supports deep linking from home page locality cards and hero search
 
 ### Filter Logic

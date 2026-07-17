@@ -208,7 +208,7 @@ export default function PropertyDetailsPage() {
           <p>
             We couldn't find the property you're looking for. It may have been sold, unlisted, or the link might be broken.
           </p>
-          <Link to="/filter">
+          <Link to="/property-list">
             <Button variant="primary" style={{ padding: "12px 32px", borderRadius: 12 }}>
               Browse Available Properties
             </Button>
@@ -226,7 +226,7 @@ export default function PropertyDetailsPage() {
         <nav className="details-breadcrumbs" aria-label="Breadcrumb">
           <Link to="/">Home</Link>
           <span>/</span>
-          <Link to="/filter">Properties</Link>
+          <Link to="/property-list">Properties</Link>
           <span>/</span>
           <span style={{ color: "#1a3c5e", fontWeight: 700 }}>{property.title}</span>
         </nav>

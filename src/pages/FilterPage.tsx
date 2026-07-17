@@ -60,7 +60,7 @@ export default function FilterPage() {
         <nav className="filter-breadcrumb">
           <Link to="/" className="filter-breadcrumb-link">Home</Link>
           <span className="filter-breadcrumb-sep">/</span>
-          <Link to="/filter" className="filter-breadcrumb-link">Properties</Link>
+          <Link to="/property-list" className="filter-breadcrumb-link">Properties</Link>
           {activeLocality && (
             <>
               <span className="filter-breadcrumb-sep">/</span>

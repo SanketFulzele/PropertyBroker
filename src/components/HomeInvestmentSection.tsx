@@ -205,7 +205,7 @@ export default function HomeInvestmentSection() {
           }}
         >
           <button
-            onClick={() => navigate("/filter")}
+            onClick={() => navigate("/property-list")}
             style={{
               padding: "16px 40px",
               borderRadius: 12,

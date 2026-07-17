@@ -20,7 +20,7 @@ function LocalityCard({
   return (
     <div
       className="locality-card"
-      onClick={() => navigate(`/filter?locality=${encodeURIComponent(locality.name)}`)}
+      onClick={() => navigate(`/property-list?locality=${encodeURIComponent(locality.name)}`)}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{

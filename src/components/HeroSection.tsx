@@ -227,7 +227,7 @@ export default function HeroSection() {
 
             <button
               className="hero-search-btn"
-              onClick={() => navigate(`/filter?locality=${encodeURIComponent(searchLocality)}`)}
+              onClick={() => navigate(`/property-list?locality=${encodeURIComponent(searchLocality)}`)}
               style={{
                 padding: "14px 28px",
                 borderRadius: "0 10px 10px 0",
