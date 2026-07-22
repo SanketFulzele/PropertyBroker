@@ -486,9 +486,38 @@ If authentication is added later, it will need to be introduced from scratch.
 | File | Purpose |
 |------|---------|
 | `src/types/analytics.ts` | TypeScript interfaces for event parameters |
-| `src/utils/analytics.ts` | Centralized tracking functions (Meta Pixel + GA4) |
+| `src/utils/analytics.ts` | Centralized tracking functions (Meta Pixel + GA4 + CAPI) |
 | `src/utils/contact.ts` | WhatsApp/Phone helpers with tracking |
 | `src/components/MetaPixel.tsx` | Meta Pixel initialization + route-based PageView |
+| `api/meta-conversion.ts` | Vercel serverless function — forwards events to Meta Conversion API |
+
+### Browser + Server Tracking (Event Deduplication)
+
+Every tracked event (Lead, Search, ViewContent, Contact) uses event ID deduplication:
+
+1. Client generates a UUID via `crypto.randomUUID()`
+2. Meta Pixel fires with that `event_id` (4th argument)
+3. Client POSTs the same `event_id` to `/api/meta-conversion`
+4. Serverless function forwards to Meta Graph API with the same `event_id`
+5. Meta deduplicates browser + server events using the shared `event_id`
+
+```
+Generate UUID
+      |
+      +-- Meta Pixel (eventID)
+      |
+      +-- POST /api/meta-conversion
+              event_id = same UUID
+              -> Meta Graph API /{pixel_id}/events
+```
+
+### Conversion API (Serverless Function)
+
+- **Endpoint:** `POST /api/meta-conversion`
+- **Runtime:** Vercel Serverless Functions
+- **Env vars:** `META_PIXEL_ID`, `META_ACCESS_TOKEN` (never exposed to client)
+- **Enrichment:** IP address (`x-forwarded-for`), User-Agent from request headers
+- **Error handling:** Failures are logged server-side; client is unaffected
 
 ### Tracked Events
 
@@ -503,6 +532,13 @@ If authentication is added later, it will need to be introduced from scratch.
 ### Meta Pixel ID
 
 `1849098536468259`
+
+### Required Vercel Environment Variables
+
+| Variable | Purpose | Exposed to Client |
+|----------|---------|-------------------|
+| `META_PIXEL_ID` | Meta Pixel ID for CAPI | No |
+| `META_ACCESS_TOKEN` | Meta Graph API access token for CAPI | No |
 
 ### Contact Sources
 

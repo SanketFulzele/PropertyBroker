@@ -14,6 +14,29 @@ function getFbq(): ((...args: unknown[]) => void) | null {
   return null;
 }
 
+function generateEventId(): string {
+  return crypto.randomUUID();
+}
+
+function sendToCAPI(
+  eventName: string,
+  eventId: string,
+  customData: Record<string, unknown>,
+) {
+  if (typeof window === "undefined") return;
+
+  fetch("/api/meta-conversion", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      event_name: eventName,
+      event_id: eventId,
+      event_source_url: window.location.href,
+      custom_data: customData,
+    }),
+  }).catch(() => {});
+}
+
 export function trackPageView({ page, title }: TrackPageViewParams) {
   const fbq = getFbq();
   if (fbq) {
@@ -26,59 +49,79 @@ export function trackPageView({ page, title }: TrackPageViewParams) {
 }
 
 export function trackSearch({ locality, resultsCount, propertyType, bhk, budgetMin, budgetMax, areaMin, areaMax, furnished }: TrackSearchParams) {
+  const eventId = generateEventId();
+  const customData = {
+    search_term: locality?.join(", ") || "all",
+    content_category: propertyType || "all",
+    content_type: bhk || "all",
+    min_budget: budgetMin || 0,
+    max_budget: budgetMax || 0,
+    min_area: areaMin || 0,
+    max_area: areaMax || 0,
+    furnished: furnished || "any",
+    results_count: resultsCount,
+  };
+
   const fbq = getFbq();
   if (fbq) {
-    fbq("trackCustom", "Search", {
-      search_term: locality?.join(", ") || "all",
-      content_category: propertyType || "all",
-      content_type: bhk || "all",
-      min_budget: budgetMin || 0,
-      max_budget: budgetMax || 0,
-      min_area: areaMin || 0,
-      max_area: areaMax || 0,
-      furnished: furnished || "any",
-      results_count: resultsCount,
-    });
+    fbq("trackCustom", "Search", customData, { eventID: eventId });
   }
+
+  sendToCAPI("Search", eventId, customData);
 }
 
 export function trackViewContent({ id, name, category, price, locality, bhk }: TrackViewContentParams) {
+  const eventId = generateEventId();
+  const customData = {
+    content_ids: [id],
+    content_name: name,
+    content_category: category,
+    content_type: "product",
+    value: price || "",
+    currency: "INR",
+    ...(locality ? { locality } : {}),
+    ...(bhk ? { bhk } : {}),
+  };
+
   const fbq = getFbq();
   if (fbq) {
-    fbq("track", "ViewContent", {
-      content_ids: [id],
-      content_name: name,
-      content_category: category,
-      content_type: "product",
-      value: price || "",
-      currency: "INR",
-      ...(locality ? { locality } : {}),
-      ...(bhk ? { bhk } : {}),
-    });
+    fbq("track", "ViewContent", customData, { eventID: eventId });
   }
+
+  sendToCAPI("ViewContent", eventId, customData);
 }
 
 export function trackContact({ method, source, propertyId, propertyName }: TrackContactParams) {
+  const eventId = generateEventId();
+  const customData = {
+    contact_method: method,
+    contact_source: source,
+    ...(propertyId ? { property_id: propertyId } : {}),
+    ...(propertyName ? { property_name: propertyName } : {}),
+  };
+
   const fbq = getFbq();
   if (fbq) {
-    fbq("trackCustom", "Contact", {
-      contact_method: method,
-      contact_source: source,
-      ...(propertyId ? { property_id: propertyId } : {}),
-      ...(propertyName ? { property_name: propertyName } : {}),
-    });
+    fbq("trackCustom", "Contact", customData, { eventID: eventId });
   }
+
+  sendToCAPI("Contact", eventId, customData);
 }
 
 export function trackLead({ method, source, value }: TrackLeadParams) {
+  const eventId = generateEventId();
+  const customData = {
+    content_name: source,
+    content_category: method,
+    ...(value ? { value, currency: "INR" } : {}),
+  };
+
   const fbq = getFbq();
   if (fbq) {
-    fbq("track", "Lead", {
-      content_name: source,
-      content_category: method,
-      ...(value ? { value, currency: "INR" } : {}),
-    });
+    fbq("track", "Lead", customData, { eventID: eventId });
   }
+
+  sendToCAPI("Lead", eventId, customData);
 }
 
 export function trackCustomEvent({ eventName, params }: TrackCustomEventParams) {
