@@ -25,16 +25,31 @@ function sendToCAPI(
 ) {
   if (typeof window === "undefined") return;
 
+  const payload = {
+    event_name: eventName,
+    event_id: eventId,
+    event_source_url: window.location.href,
+    custom_data: customData,
+  };
+
+  console.log(`[Meta CAPI] Sending ${eventName} event`, { eventId, customData });
+
   fetch("/api/meta-conversion", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      event_name: eventName,
-      event_id: eventId,
-      event_source_url: window.location.href,
-      custom_data: customData,
-    }),
-  }).catch(() => {});
+    body: JSON.stringify(payload),
+  })
+    .then((res) => {
+      if (!res.ok) {
+        console.error(`[Meta CAPI] HTTP ${res.status} for ${eventName}`);
+        res.text().then((t) => console.error("[Meta CAPI] Response body:", t));
+      } else {
+        console.log(`[Meta CAPI] ${eventName} sent successfully`);
+      }
+    })
+    .catch((err) => {
+      console.error(`[Meta CAPI] Fetch failed for ${eventName}:`, err);
+    });
 }
 
 export function trackPageView({ page, title }: TrackPageViewParams) {

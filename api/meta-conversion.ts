@@ -27,9 +27,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(500).json({ error: "Server configuration error" });
   }
 
-  const { event_name, event_id, event_source_url, custom_data, user_data } = req.body;
+  const { event_name, event_id, event_source_url, custom_data } = req.body;
+
+  console.log("[Meta CAPI] Incoming request:", {
+    event_name,
+    event_id,
+    event_source_url,
+    custom_data,
+  });
 
   if (!event_name || !event_id) {
+    console.error("[Meta CAPI] Missing required fields");
     return res.status(400).json({ error: "Missing required fields: event_name, event_id" });
   }
 
@@ -55,6 +63,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     access_token: ACCESS_TOKEN,
   };
 
+  console.log("[Meta CAPI] Sending to Graph API:", {
+    url: `${META_GRAPH_URL}/${PIXEL_ID}/events`,
+    event_name,
+    event_id,
+    pixel_id: PIXEL_ID,
+  });
+
   try {
     const response = await fetch(`${META_GRAPH_URL}/${PIXEL_ID}/events`, {
       method: "POST",
@@ -64,14 +79,19 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     const result = await response.json();
 
+    console.log("[Meta CAPI] Graph API response:", {
+      status: response.ok,
+      result,
+    });
+
     if (!response.ok) {
-      console.error("Meta CAPI error:", result);
+      console.error("[Meta CAPI] Graph API error:", result);
       return res.status(response.status).json({ error: "CAPI request failed", details: result });
     }
 
     return res.status(200).json({ success: true, events_received: (result as { events_received?: number }).events_received });
   } catch (error) {
-    console.error("Meta CAPI fetch error:", error);
+    console.error("[Meta CAPI] Fetch error:", error);
     return res.status(500).json({ error: "Internal server error" });
   }
 }
