@@ -74,13 +74,21 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   };
 
   console.log("[Meta CAPI] Outgoing payload:", JSON.stringify(logPayload, null, 2));
+  console.log("[Meta CAPI] test_event_code present:", Boolean(TEST_EVENT_CODE), TEST_EVENT_CODE);
 
   try {
     const url = `${META_GRAPH_URL}/${PIXEL_ID}/events`;
+    const formBody = new URLSearchParams();
+    formBody.append("access_token", ACCESS_TOKEN);
+    if (TEST_EVENT_CODE) {
+      formBody.append("test_event_code", TEST_EVENT_CODE);
+    }
+    formBody.append("data", JSON.stringify(payload.data));
+
     const response = await fetch(url, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
+      headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
+      body: formBody.toString(),
     });
 
     const result = await response.json() as {
