@@ -18,6 +18,12 @@ function generateEventId(): string {
   return crypto.randomUUID();
 }
 
+function getCookie(name: string): string | undefined {
+  if (typeof document === "undefined") return undefined;
+  const match = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`));
+  return match ? decodeURIComponent(match[1]) : undefined;
+}
+
 function sendToCAPI(
   eventName: string,
   eventId: string,
@@ -25,14 +31,19 @@ function sendToCAPI(
 ) {
   if (typeof window === "undefined") return;
 
+  const fbp = getCookie("_fbp");
+  const fbc = getCookie("_fbc");
+
   const payload = {
     event_name: eventName,
     event_id: eventId,
     event_source_url: window.location.href,
     custom_data: customData,
+    ...(fbp ? { fbp } : {}),
+    ...(fbc ? { fbc } : {}),
   };
 
-  console.log(`[Meta CAPI] Sending ${eventName} event`, { eventId, customData });
+  console.log(`[Meta CAPI] Sending ${eventName} event`, { eventId, fbp: fbp || "none", fbc: fbc || "none", customData });
 
   fetch("/api/meta-conversion", {
     method: "POST",
@@ -87,16 +98,22 @@ export function trackSearch({ locality, resultsCount, propertyType, bhk, budgetM
 
 export function trackViewContent({ id, name, category, price, locality, bhk }: TrackViewContentParams) {
   const eventId = generateEventId();
-  const customData = {
+  const customData: Record<string, unknown> = {
     content_ids: [id],
     content_name: name,
     content_category: category,
     content_type: "product",
-    value: price || "",
     currency: "INR",
     ...(locality ? { locality } : {}),
     ...(bhk ? { bhk } : {}),
   };
+
+  if (price) {
+    const numericPrice = Number(String(price).replace(/[^0-9.]/g, ""));
+    if (!isNaN(numericPrice) && numericPrice > 0) {
+      customData.value = numericPrice;
+    }
+  }
 
   const fbq = getFbq();
   if (fbq) {
@@ -125,11 +142,18 @@ export function trackContact({ method, source, propertyId, propertyName }: Track
 
 export function trackLead({ method, source, value }: TrackLeadParams) {
   const eventId = generateEventId();
-  const customData = {
+  const customData: Record<string, unknown> = {
     content_name: source,
     content_category: method,
-    ...(value ? { value, currency: "INR" } : {}),
   };
+
+  if (value) {
+    const numericValue = Number(String(value).replace(/[^0-9.]/g, ""));
+    if (!isNaN(numericValue) && numericValue > 0) {
+      customData.value = numericValue;
+      customData.currency = "INR";
+    }
+  }
 
   const fbq = getFbq();
   if (fbq) {
