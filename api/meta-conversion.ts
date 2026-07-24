@@ -85,6 +85,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
     formBody.append("data", JSON.stringify(payload.data));
 
+    console.log("[Meta CAPI] Graph API form body:", formBody.toString());
+
     const response = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
