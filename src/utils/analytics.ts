@@ -24,6 +24,7 @@ function getCookie(name: string): string | undefined {
   return match ? decodeURIComponent(match[1]) : undefined;
 }
 
+//capi function
 function sendToCAPI(
   eventName: string,
   eventId: string,
