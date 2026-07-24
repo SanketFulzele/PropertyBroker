@@ -24,7 +24,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   const PIXEL_ID = process.env.META_PIXEL_ID;
   const ACCESS_TOKEN = process.env.META_ACCESS_TOKEN;
-  const TEST_EVENT_CODE = process.env.META_TEST_EVENT_CODE || undefined;
+  const TEST_EVENT_CODE = process.env.META_TEST_EVENT_CODE || "TEST98368";
 
   if (!PIXEL_ID || !ACCESS_TOKEN) {
     console.error("[Meta CAPI] Missing META_PIXEL_ID or META_ACCESS_TOKEN env vars");
