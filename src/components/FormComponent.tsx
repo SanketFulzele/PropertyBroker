@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import "../styles/form.css";
 import emailjs from "@emailjs/browser";
 
@@ -12,6 +12,7 @@ export default function FormComponent() {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [focused, setFocused] = useState<string | null>(null);
+  const submissionInProgress = useRef(false);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -25,11 +26,14 @@ export default function FormComponent() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (submissionInProgress.current) return;
+
     // Basic validation (added)
     if (!formData.name || !formData.phone || !formData.propertyType) {
       alert("Please fill all required fields");
       return;
     }
+    submissionInProgress.current = true;
     setLoading(true);
 
     try {
@@ -45,12 +49,14 @@ export default function FormComponent() {
         import.meta.env.VITE_EMAILJS_PUBLIC_KEY
       );
 
+      window.gtag?.("event", "generate_lead");
       window.gtag_report_conversion();
 
       // success UI (your existing logic)
       setSubmitted(true);
 
       setTimeout(() => {
+        submissionInProgress.current = false;
         setSubmitted(false);
         setLoading(false);
         setFormData({
@@ -62,6 +68,7 @@ export default function FormComponent() {
       }, 3500);
     } catch (error) {
       console.error("Email failed:", JSON.stringify(error));
+      submissionInProgress.current = false;
       setLoading(false);
     }
   };
