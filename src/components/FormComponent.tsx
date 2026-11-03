@@ -45,6 +45,8 @@ export default function FormComponent() {
         import.meta.env.VITE_EMAILJS_PUBLIC_KEY
       );
 
+      window.gtag_report_conversion();
+
       // success UI (your existing logic)
       setSubmitted(true);
 
