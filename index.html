@@ -22,20 +22,13 @@
       gtag("config", "GT-P8V8CJW4");
       gtag("config", "AW-18391435089");
     </script>
-    <!-- Event snippet for Submit lead form (5) conversion page
-In your html page, add the snippet and call gtag_report_conversion when someone clicks on the chosen link or button. -->
+    <!-- Event snippet for Submit lead form (8) conversion. -->
     <script>
-      function gtag_report_conversion(url) {
-        var callback = function () {
-          if (typeof url != "undefined") {
-            window.location = url;
-          }
-        };
+      function gtag_report_conversion() {
         gtag("event", "conversion", {
-          send_to: "AW-18391435089/VuX1CIWZhZkdENGO3MFE",
+          send_to: "AW-18391435089/RadWCNCyk7EdENGO3MFE",
           value: 1.0,
           currency: "INR",
-          event_callback: callback,
         });
         return false;
       }
